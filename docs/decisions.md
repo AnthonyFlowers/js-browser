@@ -85,7 +85,7 @@ adoption is a separate decision to be recorded when made.
 **Context:** No tests, lint or format configuration, and no CI exist.
 
 **Decision:** Add ESLint (flat config, typescript-eslint, react-hooks), Prettier and Vitest; run lint, format check,
-typecheck, test and build in a GitHub Actions workflow on pull requests and pushes to `main`. Seed tests cover
+typecheck, test and build in a GitHub Actions workflow on pull requests (to `dev` and `main`) and pushes to `dev` (see ADR-010). Seed tests cover
 reducers and the bundler plugins' path resolution.
 
 **Consequences:** Consistent style and a regression safety net; one-off repo-wide format commit; small ongoing

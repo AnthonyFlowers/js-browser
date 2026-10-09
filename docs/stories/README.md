@@ -37,7 +37,7 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-003 | Upgrade esbuild-wasm and rewrite bundler | Done | [done/JSB-003](../done/JSB-003-upgrade-esbuild-wasm-rewrite-bundler.md) |
 | JSB-004 | Upgrade editor and UI dependencies | Todo | [JSB-004](JSB-004-upgrade-editor-and-ui-dependencies.md) |
 | JSB-005 | GitHub Actions deployment to GitHub Pages | Blocked | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
-| JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Todo | [JSB-006](JSB-006-eslint-prettier-vitest-ci.md) |
+| JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Done | [done/JSB-006](../done/JSB-006-eslint-prettier-vitest-ci.md) |
 | JSB-007 | Remove stale files and code; refresh README | Todo | [JSB-007](JSB-007-remove-stale-code-refresh-readme.md) |
 | JSB-008 | Delete obsolete `local-serve` remote branch | Todo | [JSB-008](JSB-008-delete-local-serve-branch.md) |
 | JSB-009 | Add MIT LICENSE | Todo | [JSB-009](JSB-009-add-mit-license.md) |

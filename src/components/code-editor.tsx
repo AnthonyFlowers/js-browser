@@ -13,6 +13,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>();
   const onEditorDidMount: EditorDidMount = (getValue, monacoEditor) => {
     editorRef.current = monacoEditor;
@@ -21,7 +22,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
     });
     monacoEditor.getModel()?.updateOptions({ tabSize: 2 });
     const highlighter = new Highlighter(
-      // @ts-ignore
+      // @ts-expect-error window.monaco is injected by the 3.x loader (JSB-004)
       window.monaco,
       codeShift,
       monacoEditor

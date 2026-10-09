@@ -11,7 +11,7 @@ export const persistMiddleware = ({
   dispatch: Dispatch<Action>;
   getState: () => RootState;
 }) => {
-  let timer: any;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   return (next: (action: Action) => void) => {
     return (action: Action) => {

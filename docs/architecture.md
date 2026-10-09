@@ -145,7 +145,9 @@ checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run b
 `upload-pages-artifact` (path `dist`); the `deploy` job (needs `build`, environment `github-pages`) runs
 `deploy-pages`. Permissions are `contents: read`, `pages: write`, `id-token: write`; concurrency group `pages`
 (no cancel). The repo's Pages source must be set to "GitHub Actions". Site: https://anthonyflowers.github.io/js-browser/.
-No tests or lint config yet.
+
+`.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: `npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`.
+Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.test.ts` beside their sources.
 
 ## Target architecture (refresh)
 
@@ -155,10 +157,10 @@ No tests or lint config yet.
 | Bundler | esbuild-wasm 0.28.2, `initialize` once + `build`, wasm via Vite `?url` (done) | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
 | Editor/UI | Monaco wrapper 3.7.5, jsx-highlighter, md-editor 2.1.1, FA 5 | current majors; `onMount` API; highlighter replaced/upgraded; Redux Toolkit decision | JSB-004 |
 | Deploy | GitHub Actions workflow added (pending live verification) | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
-| Quality | none | ESLint, Prettier, Vitest (reducers, plugin path resolution), CI on PRs | JSB-006 |
+| Quality | ESLint, Prettier, Vitest, CI on PRs (done) | same | JSB-006 |
 | Cleanup | stale files/code, outdated README | removed/refreshed; MIT LICENSE | JSB-007, 008, 009 |
 | Features | single "default" book, no cell export, 2 cell types | named local books (book list/switcher over `cellcache`), per-cell file save, `css` cell type | JSB-010, 011, 012 |
 
 Expected structural changes: `index.html` moves to repo root, build output `dist/`, a `.github/workflows/`
-directory, test files beside sources, `CellTypes` gains `"css"`, `state.cells` and the `files` slice may be reworked
+directory (deploy.yml, ci.yml), test files beside sources, `CellTypes` gains `"css"`, `state.cells` and the `files` slice may be reworked
 to track the list of local books, and `useCumulativeCode` may inject CSS cells.

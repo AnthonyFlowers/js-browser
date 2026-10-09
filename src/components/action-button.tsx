@@ -1,5 +1,5 @@
 interface ActionButtonProps {
-  action: Function;
+  action: () => void;
   icon: string;
 }
 
