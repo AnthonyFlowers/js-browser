@@ -199,3 +199,37 @@ JSB-004 (dependency upgrades) and JSB-006 (reducer tests as a safety net). JSB-0
 
 **Consequences:** Less boilerplate and a maintained API; a contained refactor of `src/state` and its call sites, with
 direct `redux-thunk` and `immer` dependencies likely removed. Must be coordinated with JSB-007 (`files` reducer) and JSB-010.
+
+## ADR-013: Highlight JSX in Monaco with Shiki (TextMate) instead of monaco-jsx-highlighter
+
+- **Date:** 2026-10-09
+- **Status:** Accepted
+- **Story:** JSB-004
+
+**Context:** Monaco's built-in JavaScript tokenizer (Monarch) does not understand JSX. `monaco-jsx-highlighter` 0.0.15 is
+unmaintained, peers on `monaco-editor` ^0.21, parses with jscodeshift/Babel on every edit and depends on `window.monaco`.
+
+**Decision:** Use `shiki` + `@shikijs/monaco` with the `dark-plus` theme and the `javascript` grammar (which includes JSX)
+on the pure-JS regex engine (no oniguruma wasm). `src/monaco-setup.ts` creates the highlighter and calls `shikiToMonaco`;
+the editor theme is `dark-plus`. `jscodeshift`, `monaco-jsx-highlighter`, `assert`, `lodash` and `syntax.css` were removed.
+
+**Consequences:** Tokenization is TextMate-based and correct for JSX, with no per-edit AST parsing. Only one theme and one
+grammar are bundled, loaded with dynamic imports. The module uses top-level await, so it is loaded lazily with the editor.
+
+## ADR-014: React 19, Redux 5 and Prettier 3 with minimal code changes
+
+- **Date:** 2026-10-09
+- **Status:** Accepted
+- **Story:** JSB-004
+
+**Context:** Every dependency used by the app (md-editor 4, react-redux 9, react-resizable 4, @monaco-editor/react 4.7)
+supports React 19, so staying on 18 would only defer the upgrade.
+
+**Decision:** Move to React 19, Redux 5 (`legacy_createStore`, `redux-thunk` named `thunk` export, `Middleware` typing),
+react-redux 9, immer 11 (named `produce`) and Prettier 3 (`prettier/standalone` with the babel and estree plugins; `format` is
+async) for both the Format button and dev tooling. The state layer is otherwise unchanged (Redux Toolkit is JSB-014).
+Preview `show()` now renders JSX with `react-dom/client` `createRoot`, because unpkg's latest `react-dom` (19) removed
+`ReactDOM.render`. Selectors that returned new references were fixed for react-redux 9.
+
+**Consequences:** One version of Prettier serves tool and runtime. User code that pins React 18 from unpkg and calls
+`ReactDOM.render` itself still works; only the helper changed. The unpinned `react`/`react-dom` imports resolve to the latest versions.
