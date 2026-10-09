@@ -11,7 +11,6 @@ interface Registered {
   handler: ResolveHandler;
 }
 
-// Runs the plugin's setup() against a fake build object and captures its onResolve callbacks.
 const setupPlugin = () => {
   const registered: Registered[] = [];
   const fakeBuild = {
@@ -21,7 +20,6 @@ const setupPlugin = () => {
   } as unknown as esbuild.PluginBuild;
   unpkgPathPlugin().setup(fakeBuild);
 
-  // esbuild runs the first matching onResolve callback that returns a result.
   const resolve = (
     path: string,
     resolveDir = ""
