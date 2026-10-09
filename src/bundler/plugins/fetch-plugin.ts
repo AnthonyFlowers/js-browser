@@ -6,35 +6,35 @@ const fileCache = localforage.createInstance({
   name: "filecache",
 });
 
-export const fetchPlugin = (inputCode: string) => {
+// Bump when the shape of cached OnLoadResults changes (older entries are then ignored).
+const CACHE_VERSION = "v2:";
+
+export const fetchPlugin = (inputCode: string): esbuild.Plugin => {
   return {
     name: "fetch-plugin",
     setup(build: esbuild.PluginBuild) {
-      build.onLoad({ filter: /(^index\.js$)/ }, () => {
+      build.onLoad({ filter: /^index\.js$/ }, () => {
         return {
           loader: "jsx",
           contents: inputCode,
         };
       });
 
-      build.onLoad({ filter: /.*/ }, async (args: any) => {
+      // Cache lookup for every file; returning nothing falls through to the handlers below.
+      build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
         const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(
-          args.path
+          CACHE_VERSION + args.path
         );
         if (cachedResult) {
           return cachedResult;
         }
       });
 
-      build.onLoad({ filter: /.css$/ }, async (args: any) => {
-        const { data, request } = await axios.get(args.path);
-        const escaped = data
-          .replace(/\n/g, "")
-          .replace(/"/g, '\\"')
-          .replace(/'/g, "\\'");
+      build.onLoad({ filter: /\.css$/ }, async (args: esbuild.OnLoadArgs) => {
+        const { data, request } = await axios.get<string>(args.path);
         const contents = `
         const style = document.createElement("style");
-        style.innerText = '${escaped}';
+        style.textContent = ${JSON.stringify(data)};
         document.head.appendChild(style);
         `;
         const result: esbuild.OnLoadResult = {
@@ -42,18 +42,18 @@ export const fetchPlugin = (inputCode: string) => {
           contents: contents,
           resolveDir: new URL("./", request.responseURL).pathname,
         };
-        await fileCache.setItem(args.path, result);
+        await fileCache.setItem(CACHE_VERSION + args.path, result);
         return result;
       });
 
-      build.onLoad({ filter: /.*/ }, async (args: any) => {
-        const { data, request } = await axios.get(args.path);
+      build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
+        const { data, request } = await axios.get<string>(args.path);
         const result: esbuild.OnLoadResult = {
           loader: "jsx",
           contents: data,
           resolveDir: new URL("./", request.responseURL).pathname,
         };
-        await fileCache.setItem(args.path, result);
+        await fileCache.setItem(CACHE_VERSION + args.path, result);
         return result;
       });
     },

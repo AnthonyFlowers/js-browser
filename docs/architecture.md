@@ -1,6 +1,6 @@
 # Architecture
 
-Describes the app as it is now (Vite 8, esbuild-wasm 0.8.27), followed by the planned
+Describes the app as it is now (Vite 8, esbuild-wasm 0.28.2), followed by the planned
 target. Keep this file current when structure or data flow changes.
 
 ## Overview
@@ -95,7 +95,8 @@ sequenceDiagram
 
 ## Bundler plugin pipeline
 
-`bundler/index.ts` lazily creates one esbuild service (wasm from unpkg, version hard-coded `0.8.27`) and builds
+`bundler/index.ts` lazily calls `esbuild.initialize({ wasmURL })` once (memoized promise; the wasm is imported via
+Vite `?url`, so it is self-hosted and always matches the installed version, ADR-009) and then `esbuild.build`s
 with `bundle: true`, `write: false`, `define` for `process.env.NODE_ENV` and `global`, and a JSX factory of
 `_React.createElement` / `_React.Fragment`.
 
@@ -107,13 +108,13 @@ graph LR
   U -->|onLoad| F["fetch-plugin"]
   F -->|index.js| Raw["user code (cumulative), loader jsx"]
   F -->|cache hit| LF[("localforage 'filecache' (IndexedDB)")]
-  F -->|*.css| CSS["axios GET, wrap CSS in JS that appends a style element"]
+  F -->|*.css| CSS["axios GET, wrap CSS in JS that appends a style element (JSON.stringify)"]
   F -->|other| JS["axios GET, loader jsx"]
   CSS --> LF
   JS --> LF
 ```
 
-Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (`/.css$/`, unescaped dot) -> everything
+Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (`/\.css$/`) -> everything
 else. `resolveDir` for fetched files is derived from `request.responseURL` so relative imports inside packages
 resolve (unpkg redirects to concrete versions/files).
 
@@ -151,7 +152,7 @@ No tests or lint config yet.
 | Area | Now | Target | Story |
 |------|-----|--------|-------|
 | Build/dev | Vite (done) | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
-| Bundler | esbuild-wasm 0.8.27, `startService`, wasm URL hard-coded | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
+| Bundler | esbuild-wasm 0.28.2, `initialize` once + `build`, wasm via Vite `?url` (done) | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
 | Editor/UI | Monaco wrapper 3.7.5, jsx-highlighter, md-editor 2.1.1, FA 5 | current majors; `onMount` API; highlighter replaced/upgraded; Redux Toolkit decision | JSB-004 |
 | Deploy | GitHub Actions workflow added (pending live verification) | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
 | Quality | none | ESLint, Prettier, Vitest (reducers, plugin path resolution), CI on PRs | JSB-006 |

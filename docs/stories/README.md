@@ -34,7 +34,7 @@ Findings, decisions (link ADRs), blockers, owner actions.
 |----|-------|--------|----------|
 | JSB-001 | Add CLAUDE.md and docs/story tracking structure | Done | [done/JSB-001](../done/JSB-001-add-claude-md-and-story-tracking.md) |
 | JSB-002 | Migrate build from CRA 4 to Vite | Done | [done/JSB-002](../done/JSB-002-migrate-cra-to-vite.md) |
-| JSB-003 | Upgrade esbuild-wasm and rewrite bundler | Todo | [JSB-003](JSB-003-upgrade-esbuild-wasm-rewrite-bundler.md) |
+| JSB-003 | Upgrade esbuild-wasm and rewrite bundler | Done | [done/JSB-003](../done/JSB-003-upgrade-esbuild-wasm-rewrite-bundler.md) |
 | JSB-004 | Upgrade editor and UI dependencies | Todo | [JSB-004](JSB-004-upgrade-editor-and-ui-dependencies.md) |
 | JSB-005 | GitHub Actions deployment to GitHub Pages | Blocked | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
 | JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Todo | [JSB-006](JSB-006-eslint-prettier-vitest-ci.md) |
