@@ -14,31 +14,30 @@ Architecture details: `docs/architecture.md`. Decisions: `docs/decisions.md`. Wo
 
 ## Tech stack
 
-Current (as of start of the refresh):
-- React 18, Redux 4 (`createStore`, redux-thunk, immer `produce` reducers), TypeScript 4.9
-- Create React App 4 (react-scripts 4.0.1), needs `--openssl-legacy-provider` on modern Node
+Current:
+- React 18, Redux 4 (`createStore`, redux-thunk, immer `produce` reducers), TypeScript 5
+- Vite 8 + @vitejs/plugin-react (`vite.config.ts`, `base: "/js-browser/"`, output `dist/`), Node 24 + npm
 - Monaco via @monaco-editor/react 3.7.5 (+ monaco-jsx-highlighter, jscodeshift, prettier 2 for Format)
 - esbuild-wasm 0.8.27 (old `startService` API), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 5; streamsaver for book download
-- Deployed manually with the `gh-pages` package. No tests, no lint/prettier config, no CI.
+- npm `overrides` pin legacy peers (monaco-editor/react) to the installed versions until JSB-004.
+- Deployed manually from the `gh-pages` branch (package removed). No tests, no lint/prettier config, no CI.
 
-Target (see stories JSB-002..JSB-006): Vite, current esbuild-wasm (`initialize`/`build`), current
+Target (see stories JSB-003..JSB-006): current esbuild-wasm (`initialize`/`build`), current
 Monaco/md-editor/other deps, Node 24 + npm, ESLint + Prettier + Vitest, GitHub Actions -> GitHub Pages.
 
 ## Commands
 
-Current scripts are Windows-only (`SET NODE_OPTIONS=... && ...`) and WILL BE REPLACED by JSB-002.
-On Linux/macOS the working equivalents are:
-
 ```
-npm install
-NODE_OPTIONS=--openssl-legacy-provider npx react-scripts start    # dev server
-NODE_OPTIONS=--openssl-legacy-provider npx react-scripts build    # production build -> build/
-npx tsc --noEmit                                                  # typecheck
+npm ci                  # install (Node 24, see .nvmrc)
+npm run dev             # Vite dev server, http://localhost:5173/js-browser/
+npm run build           # production build -> dist/
+npm run preview         # serve dist/ at http://localhost:4173/js-browser/
+npx tsc --noEmit        # typecheck
 ```
 
-Do not use `npm run deploy` (see Deployment). After JSB-002/006 land, update this section with
-`npm run dev|build|lint|format|test` etc.
+There is no manual deploy command (see Deployment). JSB-006 will add `lint|format|test`; update this
+section then.
 
 ## Repo layout
 
@@ -52,7 +51,8 @@ src/state/                  store.ts, reducers/ (cells, bundles, files), actions
                             action-creators/ (cells, bundles, fetchCells = persistence + book IO),
                             middlewares/persist-middleware.ts (debounced save), cell.ts (Cell type)
 src/bundler/                index.ts (esbuild service) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
-public/                     static assets, index.html (CRA; moves in JSB-002)
+index.html, vite.config.ts  Vite entry HTML (repo root) and config
+public/                     static assets (favicon, icons, manifest.json, robots.txt)
 docs/                       stories/, done/, architecture.md, decisions.md
 ```
 
@@ -68,7 +68,7 @@ Full description: `docs/architecture.md`.
 Target: GitHub Actions workflow on push to `main` using `actions/upload-pages-artifact` +
 `actions/deploy-pages` (JSB-005). Repo Pages source must be "GitHub Actions" (owner action). Vite
 `base` must be `/js-browser/`. Until JSB-005 is done the site is deployed manually from the `gh-pages`
-branch. Do NOT reintroduce the manual `gh-pages` package deploy.
+branch (build with `npm run build`, publish `dist/`). Do NOT reintroduce the manual `gh-pages` package deploy.
 
 ## Conventions
 
