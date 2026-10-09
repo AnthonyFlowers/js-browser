@@ -94,6 +94,11 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
    the index in `docs/stories/README.md` (link now points to `docs/done/`).
 5. Record any significant technical choice as a new ADR in `docs/decisions.md`.
 6. Keep `docs/architecture.md` current whenever structure or data flow changes.
-7. Do not commit unless asked; do not push to `main` directly.
+7. Do not commit unless asked.
+8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch and opens a PR into `dev`;
+   merge it once CI is green. Releases are `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge
+   to `main` deploys to GitHub Pages). Never push directly to `main` or `dev`.
+9. Deleting any branch (e.g. `gh-pages`, `local-serve`) requires explicit owner confirmation after showing the
+   owner what is on it.
 
 See `docs/README.md` for the story lifecycle.

@@ -153,3 +153,49 @@ The `jsxFactory`/`jsxFragment` (`_React.*`) setting is kept, coupled to the `_Re
 **Consequences:** No runtime unpkg dependency for the wasm; version drift is impossible; the deployed bundle grows by
 a ~14 MB (about 3.8 MB gzipped) asset that is fetched on first bundle. User packages are still fetched from unpkg.
 
+## ADR-010: Branching model with long-lived `dev` and release PRs into `main`
+
+- **Date:** 2026-10-09
+- **Status:** Accepted
+- **Story:** JSB-015
+
+**Context:** A merge to `main` deploys to GitHub Pages, so `main` should only change deliberately. Work was previously
+committed on a single working branch.
+
+**Decision:** `dev` is a long-lived branch holding in-progress work (created from `main`). Story/feature branches open
+PRs into `dev` and are merged once CI is green. Releases are `dev` -> `main` PRs, opened by Claude and merged by the
+owner; the merge deploys to GitHub Pages. Nobody pushes directly to `main` or `dev`. Deleting branches (`gh-pages`,
+`local-serve`) requires explicit owner confirmation after Claude shows what is on them.
+
+**Consequences:** CI (JSB-006) must run on PRs into `dev` and `main`. Releases are batched and owner-gated. Slightly more
+PR overhead per story.
+
+## ADR-011: Bundle Monaco locally via Vite workers (no CDN loader)
+
+- **Date:** 2026-10-09
+- **Status:** Accepted
+- **Story:** JSB-004
+
+**Context:** `@monaco-editor/react` 3.x loads Monaco from a CDN at runtime, even though `monaco-editor` is a dependency.
+The esbuild wasm is already self-hosted (ADR-009).
+
+**Decision:** Bundle `monaco-editor` with Vite and configure the wrapper with `loader.config({ monaco })`; workers are
+imported with Vite's `?worker` suffix and provided through `MonacoEnvironment.getWorker`. No CDN loader.
+
+**Consequences:** The app works without the Monaco CDN and the editor version always matches the installed package.
+The build grows and needs worker configuration; verify both dev and the `/js-browser/` production build.
+
+## ADR-012: Migrate to Redux Toolkit as a separate story
+
+- **Date:** 2026-10-09
+- **Status:** Accepted
+- **Story:** JSB-014
+
+**Context:** The state layer uses the deprecated `createStore` with hand-written action types, switch reducers wrapped in
+immer `produce`, and plain thunks. JSB-004 raised whether to adopt Redux Toolkit.
+
+**Decision:** Adopt Redux Toolkit (`configureStore`, `createSlice`, `createAsyncThunk`) in its own story, JSB-014, after
+JSB-004 (dependency upgrades) and JSB-006 (reducer tests as a safety net). JSB-004 does not change the state layer.
+
+**Consequences:** Less boilerplate and a maintained API; a contained refactor of `src/state` and its call sites, with
+direct `redux-thunk` and `immer` dependencies likely removed. Must be coordinated with JSB-007 (`files` reducer) and JSB-010.
