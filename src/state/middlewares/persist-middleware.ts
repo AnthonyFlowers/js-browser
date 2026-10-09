@@ -1,20 +1,17 @@
-import { Dispatch } from "redux";
+import { Dispatch, Middleware } from "redux";
 import { saveCells } from "../action-creators";
 import { ActionType } from "../action-types";
 import { Action } from "../actions";
 import { RootState } from "../reducers";
 
-export const persistMiddleware = ({
+export const persistMiddleware: Middleware<object, RootState> = ({
   dispatch,
   getState,
-}: {
-  dispatch: Dispatch<Action>;
-  getState: () => RootState;
 }) => {
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  return (next: (action: Action) => void) => {
-    return (action: Action) => {
+  return (next) => {
+    return (action) => {
       next(action);
       if (
         [
@@ -23,13 +20,13 @@ export const persistMiddleware = ({
           ActionType.INSERT_CELL_AFTER,
           ActionType.DELETE_CELL,
           ActionType.UPDATE_CELLS_TITLE,
-        ].includes(action.type)
+        ].includes((action as Action).type)
       ) {
         if (timer) {
           clearTimeout(timer);
         }
         timer = setTimeout(() => {
-          saveCells()(dispatch, getState);
+          saveCells()(dispatch as Dispatch<Action>, getState);
         }, 250);
       }
     };
