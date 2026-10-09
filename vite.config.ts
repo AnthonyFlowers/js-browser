@@ -8,8 +8,4 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
   },
-  define: {
-    // Some browser-side libs (jscodeshift, monaco-jsx-highlighter, streamsaver) expect Node's `global`.
-    global: "globalThis",
-  },
 });
