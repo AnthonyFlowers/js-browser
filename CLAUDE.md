@@ -88,6 +88,7 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 - State access only through typed hooks in `src/hooks` (`useTypedSelector`, `useActions`); new action
   creators go in `src/state/action-creators` and are exported from its index.
 - Reducers use immer `produce`; action types live in `action-types`, shapes in `actions`.
+- Keep comments light: only comment code that is genuinely complex or non-obvious; prefer clear names over comments.
 - Each component has its own `.css` file next to it; filenames are kebab-case.
 - Node 24 and npm only (keep `package-lock.json`); no yarn/pnpm.
 - Subagents: use Haiku for context-pulling tasks (search, reading, doc lookups, summarizing);
