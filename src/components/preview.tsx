@@ -39,12 +39,12 @@ const html = `
 `;
 
 const Preview: React.FC<PreviewProps> = ({ code, bundlingStatus }) => {
-  const iframe = useRef<any>();
+  const iframe = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    iframe.current.srcdoc = html;
+    iframe.current!.srcdoc = html;
     setTimeout(() => {
-      iframe.current.contentWindow.postMessage(code, "*");
+      iframe.current?.contentWindow?.postMessage(code, "*");
     }, 200);
   }, [code]);
 
