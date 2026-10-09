@@ -40,7 +40,7 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Done | [done/JSB-006](../done/JSB-006-eslint-prettier-vitest-ci.md) |
 | JSB-007 | Remove stale files and code; refresh README | Todo | [JSB-007](JSB-007-remove-stale-code-refresh-readme.md) |
 | JSB-008 | Delete obsolete `local-serve` remote branch | Todo | [JSB-008](JSB-008-delete-local-serve-branch.md) |
-| JSB-009 | Add MIT LICENSE | Todo | [JSB-009](JSB-009-add-mit-license.md) |
+| JSB-009 | Add MIT LICENSE | Done | [done/JSB-009](../done/JSB-009-add-mit-license.md) |
 | JSB-010 | Switch between named local books | Todo | [JSB-010](JSB-010-switch-named-local-books.md) |
 | JSB-011 | Save an individual cell as a file | Todo | [JSB-011](JSB-011-save-cell-as-file.md) |
 | JSB-012 | Add CSS cell type | Todo | [JSB-012](JSB-012-css-cell-type.md) |
