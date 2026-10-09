@@ -37,7 +37,6 @@ const setupPlugin = (code: string) => {
   } as unknown as esbuild.PluginBuild;
   fetchPlugin(code).setup(fakeBuild);
 
-  // esbuild runs matching onLoad callbacks in order until one returns a result.
   const load = async (path: string) => {
     for (const { filter, handler } of registered) {
       if (filter.test(path)) {
