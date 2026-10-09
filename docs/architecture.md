@@ -1,6 +1,6 @@
 # Architecture
 
-Describes the app as it is at the start of the refresh (CRA 4, esbuild-wasm 0.8.27), followed by the planned
+Describes the app as it is now (Vite 8, esbuild-wasm 0.8.27), followed by the planned
 target. Keep this file current when structure or data flow changes.
 
 ## Overview
@@ -133,16 +133,20 @@ resolve (unpkg redirects to concrete versions/files).
 
 ## Build and deployment
 
-CRA 4 (`react-scripts` 4.0.1), Node needs `--openssl-legacy-provider` (the npm scripts use Windows `SET`).
-`homepage` in package.json drives asset paths. `npm run deploy` runs `predeploy` (build) then `gh-pages -d build`,
-pushing to the `gh-pages` branch which GitHub Pages serves at https://anthonyflowers.github.io/js-browser/.
-No tests, linting config (other than the CRA `eslintConfig` block) or CI.
+Vite 8 with `@vitejs/plugin-react` (`vite.config.ts`): `base: "/js-browser/"`, root `index.html` with
+`<script type="module" src="/src/index.tsx">`, static files from `public/` (favicon, icons, `manifest.json`,
+`robots.txt`), output in `dist/`. `define: { global: "globalThis" }` supports browser-side libs that expect Node's
+`global`; `assert` is an explicit dependency because jscodeshift/recast require it (Vite does not polyfill Node
+builtins). Scripts: `dev`, `build`, `preview`. Node 24 (`.nvmrc`, `engines`), npm. The `process.env.NODE_ENV` in
+`bundler/index.ts` is an esbuild `define` for user code, not a Vite env var.
+Deployment is still manual from the `gh-pages` branch (https://anthonyflowers.github.io/js-browser/) until JSB-005.
+No tests, lint config or CI yet.
 
 ## Target architecture (refresh)
 
 | Area | Now | Target | Story |
 |------|-----|--------|-------|
-| Build/dev | CRA 4, openssl flag, Windows scripts | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
+| Build/dev | Vite (done) | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
 | Bundler | esbuild-wasm 0.8.27, `startService`, wasm URL hard-coded | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
 | Editor/UI | Monaco wrapper 3.7.5, jsx-highlighter, md-editor 2.1.1, FA 5 | current majors; `onMount` API; highlighter replaced/upgraded; Redux Toolkit decision | JSB-004 |
 | Deploy | manual `gh-pages` package | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
