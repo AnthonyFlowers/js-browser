@@ -36,7 +36,7 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-002 | Migrate build from CRA 4 to Vite | Done | [done/JSB-002](../done/JSB-002-migrate-cra-to-vite.md) |
 | JSB-003 | Upgrade esbuild-wasm and rewrite bundler | Todo | [JSB-003](JSB-003-upgrade-esbuild-wasm-rewrite-bundler.md) |
 | JSB-004 | Upgrade editor and UI dependencies | Todo | [JSB-004](JSB-004-upgrade-editor-and-ui-dependencies.md) |
-| JSB-005 | GitHub Actions deployment to GitHub Pages | Todo | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
+| JSB-005 | GitHub Actions deployment to GitHub Pages | Blocked | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
 | JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Todo | [JSB-006](JSB-006-eslint-prettier-vitest-ci.md) |
 | JSB-007 | Remove stale files and code; refresh README | Todo | [JSB-007](JSB-007-remove-stale-code-refresh-readme.md) |
 | JSB-008 | Delete obsolete `local-serve` remote branch | Todo | [JSB-008](JSB-008-delete-local-serve-branch.md) |

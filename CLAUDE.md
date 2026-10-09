@@ -21,7 +21,7 @@ Current:
 - esbuild-wasm 0.8.27 (old `startService` API), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 5; streamsaver for book download
 - npm `overrides` pin legacy peers (monaco-editor/react) to the installed versions until JSB-004.
-- Deployed manually from the `gh-pages` branch (package removed). No tests, no lint/prettier config, no CI.
+- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages. No tests, no lint/prettier config, no CI checks yet.
 
 Target (see stories JSB-003..JSB-006): current esbuild-wasm (`initialize`/`build`), current
 Monaco/md-editor/other deps, Node 24 + npm, ESLint + Prettier + Vitest, GitHub Actions -> GitHub Pages.
@@ -65,10 +65,12 @@ Full description: `docs/architecture.md`.
 
 ## Deployment
 
-Target: GitHub Actions workflow on push to `main` using `actions/upload-pages-artifact` +
-`actions/deploy-pages` (JSB-005). Repo Pages source must be "GitHub Actions" (owner action). Vite
-`base` must be `/js-browser/`. Until JSB-005 is done the site is deployed manually from the `gh-pages`
-branch (build with `npm run build`, publish `dist/`). Do NOT reintroduce the manual `gh-pages` package deploy.
+`.github/workflows/deploy.yml` runs on push to `main` (and manually via `workflow_dispatch`): a `build` job
+(checkout, setup-node from `.nvmrc` with npm cache, `npm ci`, `npm run build`, `configure-pages`,
+`upload-pages-artifact` of `dist/`) and a `deploy` job (`deploy-pages`, environment `github-pages`). Actions
+are pinned to major versions. The repo's Pages source must be "GitHub Actions" (owner setting; Settings > Pages).
+Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` package deploy; the legacy
+`gh-pages` branch is to be deleted by the owner only after the Actions deploy is verified live (JSB-005).
 
 ## Conventions
 
