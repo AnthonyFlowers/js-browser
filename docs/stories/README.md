@@ -44,3 +44,4 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-010 | Switch between named local books | Todo | [JSB-010](JSB-010-switch-named-local-books.md) |
 | JSB-011 | Save an individual cell as a file | Todo | [JSB-011](JSB-011-save-cell-as-file.md) |
 | JSB-012 | Add CSS cell type | Todo | [JSB-012](JSB-012-css-cell-type.md) |
+| JSB-013 | Per-model auto-compact settings | In Progress | [JSB-013](JSB-013-per-model-autocompact-settings.md) |
