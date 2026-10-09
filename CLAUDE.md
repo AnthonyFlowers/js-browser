@@ -21,10 +21,10 @@ Current:
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 5; streamsaver for book download
 - npm `overrides` pin legacy peers (monaco-editor/react) to the installed versions until JSB-004.
-- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages. No tests, no lint/prettier config, no CI checks yet.
+- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 2.8 (`.prettierrc`; same package as the in-editor Format runtime dep until JSB-004), Vitest 5 (node environment).
+- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build on PRs to `dev`/`main` and pushes to `dev`.
 
-Target (see stories JSB-004..JSB-006): current
-Monaco/md-editor/other deps, Node 24 + npm, ESLint + Prettier + Vitest, GitHub Actions -> GitHub Pages.
+Target (see stories JSB-004, JSB-014): current Monaco (bundled locally)/md-editor/other deps, Redux Toolkit.
 
 ## Commands
 
@@ -33,11 +33,18 @@ npm ci                  # install (Node 24, see .nvmrc)
 npm run dev             # Vite dev server, http://localhost:5173/js-browser/
 npm run build           # production build -> dist/
 npm run preview         # serve dist/ at http://localhost:4173/js-browser/
-npx tsc --noEmit        # typecheck
+npm run lint            # ESLint (flat config)
+npm run format          # Prettier --write
+npm run format:check    # Prettier --check (CI)
+npm run typecheck       # tsc --noEmit
+npm test                # Vitest (vitest run)
 ```
 
-There is no manual deploy command (see Deployment). JSB-006 will add `lint|format|test`; update this
-section then.
+CI runs `lint`, `format:check`, `typecheck`, `test` and `build`; run them all before opening a PR.
+Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsReducer.test.ts` beside `cellsReducer.ts`);
+bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
+
+There is no manual deploy command (see Deployment).
 
 ## Repo layout
 
@@ -53,6 +60,8 @@ src/state/                  store.ts, reducers/ (cells, bundles, files), actions
 src/bundler/                index.ts (esbuild initialize/build) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
 index.html, vite.config.ts  Vite entry HTML (repo root) and config
 public/                     static assets (favicon, icons, manifest.json, robots.txt)
+eslint.config.js, .prettierrc  lint/format config (tests are `src/**/*.test.ts`, Vitest config in vite.config.ts)
+.github/workflows/          deploy.yml (Pages), ci.yml (checks)
 docs/                       stories/, done/, architecture.md, decisions.md
 ```
 
@@ -75,7 +84,7 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 ## Conventions
 
 - Match existing style: function components (`React.FC`), hooks, TypeScript strict, double quotes,
-  semicolons, 2-space indent (Prettier defaults once JSB-006 lands).
+  semicolons, 2-space indent (enforced by Prettier, `.prettierrc`; ESLint must stay clean).
 - State access only through typed hooks in `src/hooks` (`useTypedSelector`, `useActions`); new action
   creators go in `src/state/action-creators` and are exported from its index.
 - Reducers use immer `produce`; action types live in `action-types`, shapes in `actions`.

@@ -10,7 +10,7 @@ export const TopMenu = () => {
     return title;
   });
   const [title, setTitle] = useState<string>(initialTitle);
-  const [isImporting, setIsImporting] = useState<Boolean>(false);
+  const [isImporting, setIsImporting] = useState<boolean>(false);
 
   const handleExport = () => {
     exportCells();

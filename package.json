@@ -1,7 +1,9 @@
 {
   "name": "js-browser",
   "version": "1.0.0",
+  "type": "module",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/jscodeshift": "0.7.2",
     "@types/node": "^24.19.2",
     "@types/prettier": "^2.7.2",
@@ -10,12 +12,24 @@
     "@types/react-resizable": "3.0.2",
     "@types/streamsaver": "^2.0.1",
     "@vitejs/plugin-react": "^6.1.2",
-    "vite": "^8.3.4"
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",

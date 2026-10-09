@@ -23,4 +23,6 @@ As a maintainer, I want dead files and code removed and the README brought up to
 
 ## Notes
 
+JSB-006 already fixed (do not duplicate): unused `useState` import in `App.tsx`; `Function`/`Boolean` types, `let` -> `const`, and `case` declarations flagged by lint. `console.log("saved")`, `public/test.html`, the `files` reducer and the `ActionButto` typo are still open.
+
 Known: the title `<input>` in `top-menu.tsx` is currently `disabled`, which is part of why README item "switch between books" is unfinished (see JSB-010).

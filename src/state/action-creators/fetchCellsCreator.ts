@@ -78,7 +78,7 @@ export const importCells = (cells: string) => {
     dispatch({ type: ActionType.IMPORT_BOOK });
     const { data, order, title } = JSON.parse(cells);
     if (data && order && title) {
-      let item = { data, order, title };
+      const item = { data, order, title };
       dispatch({ type: ActionType.IMPORT_BOOK_COMPLETE, payload: item });
     } else {
       dispatch({
