@@ -27,7 +27,7 @@ Decision: ADR-002. Order matters: do not delete `gh-pages` until the Actions dep
 ### Status (2026-10-09)
 
 Blocked: waiting on merge to `main` and the owner setting Pages source to "GitHub Actions". The `gh-pages` branch
-deletion requires owner confirmation after live verification.
+deletion requires owner confirmation: Claude reports the live-site verification (and shows what is on `gh-pages`), then the owner confirms the deletion (ADR-010). Releases reach `main` through `dev` -> `main` PRs merged by the owner, so the first deploy happens when the owner merges the release PR.
 
 - Workflow written and validated locally: YAML parses, `actionlint` 1.7.7 reports no issues, and
   `npm ci && npm run build` on Node 24.21.0 succeeds with `dist/index.html` using `/js-browser/` paths.

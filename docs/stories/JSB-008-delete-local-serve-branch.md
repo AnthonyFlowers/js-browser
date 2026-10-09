@@ -18,4 +18,4 @@ As the owner, I want the unused `local-serve` remote branch removed so that the 
 
 ## Notes
 
-Purpose of the branch is unknown. Not visible in the local clone's remote refs when this story was written (only `main` and the working branch), so fetch first. Do not delete without owner confirmation.
+Purpose of the branch is unknown. Not visible in the local clone's remote refs when this story was written (only `main` and the working branch), so fetch first. Do not delete without owner confirmation: Claude shows the owner what is on the branch (commit list and diff vs. `main`) first, and the owner confirms the deletion explicitly (ADR-010). The `dev` branch now exists, so also check whether anything should go there instead.

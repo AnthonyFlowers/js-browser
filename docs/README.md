@@ -19,4 +19,10 @@
 5. **Decisions**: any significant technical choice made along the way gets an ADR in `decisions.md`.
    Update `architecture.md` if structure or data flow changed.
 
+## Branching and release
+
+Story work happens on a branch that opens a PR into `dev` and is merged once CI is green. Releases are `dev` -> `main`
+PRs, opened by Claude and merged by the owner; a merge to `main` deploys to GitHub Pages. Never push directly to `main`
+or `dev`. Branch deletions need owner confirmation (ADR-010).
+
 IDs are never reused. Story files are never deleted.
