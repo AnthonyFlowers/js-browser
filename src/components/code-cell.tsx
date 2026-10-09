@@ -1,12 +1,13 @@
 import "./code-cell.css";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Cell } from "../state";
-import CodeEditor from "./code-editor";
 import Preview from "./preview";
 import Resizable from "./resizable";
 import { useActions } from "../hooks/use-actions";
 import { useTypedSelector } from "../hooks/use-typed-selector";
 import { useCumulativeCode } from "../hooks/use-cumulative-code";
+
+const CodeEditor = lazy(() => import("./code-editor"));
 
 interface CodeCellProps {
   cell: Cell;
@@ -41,10 +42,12 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
         }}
       >
         <Resizable direction="horizontal">
-          <CodeEditor
-            initialValue={cell.content}
-            onChange={(value) => updateCell(cell.id, value)}
-          />
+          <Suspense fallback={null}>
+            <CodeEditor
+              initialValue={cell.content}
+              onChange={(value) => updateCell(cell.id, value)}
+            />
+          </Suspense>
         </Resizable>
         <div className="progress-wrapper">
           {!bundle || bundle.loading ? (
