@@ -18,12 +18,12 @@ Current:
 - React 18, Redux 4 (`createStore`, redux-thunk, immer `produce` reducers), TypeScript 5
 - Vite 8 + @vitejs/plugin-react (`vite.config.ts`, `base: "/js-browser/"`, output `dist/`), Node 24 + npm
 - Monaco via @monaco-editor/react 3.7.5 (+ monaco-jsx-highlighter, jscodeshift, prettier 2 for Format)
-- esbuild-wasm 0.8.27 (old `startService` API), axios + localforage (IndexedDB) for fetch/cache
+- esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 5; streamsaver for book download
 - npm `overrides` pin legacy peers (monaco-editor/react) to the installed versions until JSB-004.
 - Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages. No tests, no lint/prettier config, no CI checks yet.
 
-Target (see stories JSB-003..JSB-006): current esbuild-wasm (`initialize`/`build`), current
+Target (see stories JSB-004..JSB-006): current
 Monaco/md-editor/other deps, Node 24 + npm, ESLint + Prettier + Vitest, GitHub Actions -> GitHub Pages.
 
 ## Commands
@@ -50,7 +50,7 @@ src/hooks/                  use-actions (bound action creators), use-typed-selec
 src/state/                  store.ts, reducers/ (cells, bundles, files), actions/, action-types/,
                             action-creators/ (cells, bundles, fetchCells = persistence + book IO),
                             middlewares/persist-middleware.ts (debounced save), cell.ts (Cell type)
-src/bundler/                index.ts (esbuild service) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
+src/bundler/                index.ts (esbuild initialize/build) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
 index.html, vite.config.ts  Vite entry HTML (repo root) and config
 public/                     static assets (favicon, icons, manifest.json, robots.txt)
 docs/                       stories/, done/, architecture.md, decisions.md
