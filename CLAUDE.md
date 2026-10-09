@@ -81,6 +81,7 @@ branch. Do NOT reintroduce the manual `gh-pages` package deploy.
 - Node 24 and npm only (keep `package-lock.json`); no yarn/pnpm.
 - Subagents: use Haiku for context-pulling tasks (search, reading, doc lookups, summarizing);
   use Sonnet for implementation and other delegated work.
+- `.claude/settings.json` sets per-model auto-compact windows (Haiku 100k, Opus 600k) — see JSB-013.
 
 ## Workflow rules
 
