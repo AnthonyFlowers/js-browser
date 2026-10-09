@@ -139,8 +139,12 @@ Vite 8 with `@vitejs/plugin-react` (`vite.config.ts`): `base: "/js-browser/"`, r
 `global`; `assert` is an explicit dependency because jscodeshift/recast require it (Vite does not polyfill Node
 builtins). Scripts: `dev`, `build`, `preview`. Node 24 (`.nvmrc`, `engines`), npm. The `process.env.NODE_ENV` in
 `bundler/index.ts` is an esbuild `define` for user code, not a Vite env var.
-Deployment is still manual from the `gh-pages` branch (https://anthonyflowers.github.io/js-browser/) until JSB-005.
-No tests, lint config or CI yet.
+Deployment (ADR-002): `.github/workflows/deploy.yml` runs on push to `main` and `workflow_dispatch`. The `build` job
+checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run build`, then `configure-pages` and
+`upload-pages-artifact` (path `dist`); the `deploy` job (needs `build`, environment `github-pages`) runs
+`deploy-pages`. Permissions are `contents: read`, `pages: write`, `id-token: write`; concurrency group `pages`
+(no cancel). The repo's Pages source must be set to "GitHub Actions". Site: https://anthonyflowers.github.io/js-browser/.
+No tests or lint config yet.
 
 ## Target architecture (refresh)
 
@@ -149,7 +153,7 @@ No tests, lint config or CI yet.
 | Build/dev | Vite (done) | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
 | Bundler | esbuild-wasm 0.8.27, `startService`, wasm URL hard-coded | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
 | Editor/UI | Monaco wrapper 3.7.5, jsx-highlighter, md-editor 2.1.1, FA 5 | current majors; `onMount` API; highlighter replaced/upgraded; Redux Toolkit decision | JSB-004 |
-| Deploy | manual `gh-pages` package | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
+| Deploy | GitHub Actions workflow added (pending live verification) | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
 | Quality | none | ESLint, Prettier, Vitest (reducers, plugin path resolution), CI on PRs | JSB-006 |
 | Cleanup | stale files/code, outdated README | removed/refreshed; MIT LICENSE | JSB-007, 008, 009 |
 | Features | single "default" book, no cell export, 2 cell types | named local books (book list/switcher over `cellcache`), per-cell file save, `css` cell type | JSB-010, 011, 012 |
