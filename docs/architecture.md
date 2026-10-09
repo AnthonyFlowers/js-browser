@@ -5,7 +5,7 @@ target. Keep this file current when structure or data flow changes.
 
 ## Overview
 
-A single-page React 18 app. A "book" is an ordered list of cells (`code` or `text`). Code cells are bundled in
+A single-page React 19 app. A "book" is an ordered list of cells (`code` or `text`). Code cells are bundled in
 the browser with esbuild-wasm; bare imports are fetched from unpkg.com; output runs in a sandboxed iframe.
 There is no backend; everything is stored in the browser (IndexedDB via localforage).
 
@@ -23,7 +23,7 @@ graph TD
   CellListItem --> CodeCell
   CellListItem --> TextEditor["TextEditor (MDEditor)"]
   CodeCell --> Resizable
-  Resizable --> CodeEditor["CodeEditor (Monaco + Format button)"]
+  Resizable --> CodeEditor["CodeEditor (lazy; Monaco + Format button)"]
   CodeCell --> Preview["Preview (sandboxed iframe)"]
 ```
 
@@ -35,7 +35,7 @@ graph TD
 
 ## State shape (Redux)
 
-Store: `createStore(reducers, {}, applyMiddleware(persistMiddleware, thunk))` in `src/state/store.ts`.
+Store: `legacy_createStore(reducers, {}, applyMiddleware(persistMiddleware, thunk))` in `src/state/store.ts`.
 Reducers use immer `produce`.
 
 ```ts
@@ -84,8 +84,8 @@ sequenceDiagram
 ```
 
 1. `useCumulativeCode(cellId)` walks `order`, and for every code cell up to and including `cellId` appends
-   either the real `show` implementation (only for the target cell; it imports `_React`/`_ReactDOM` and renders
-   JSX via `ReactDOM.render` or JSON/HTML into `#root`) or `var show = () => {};` for earlier cells, followed by
+   either the real `show` implementation (only for the target cell; it imports `_React` and `react-dom/client`'s `createRoot` and renders
+   JSX into `#root`, or JSON/HTML) or `var show = () => {};` for earlier cells, followed by
    the cell content. Text cells are skipped. Result: each cell sees all earlier code; only its own `show` draws.
 2. `CodeCell` effect calls `createBundle(cell.id, cumulativeCode)`.
 3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors are caught and
@@ -118,6 +118,16 @@ Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (
 else. `resolveDir` for fetched files is derived from `request.responseURL` so relative imports inside packages
 resolve (unpkg redirects to concrete versions/files).
 
+## Editor (Monaco)
+
+`src/monaco-setup.ts` (imported by `code-editor.tsx`, which `code-cell.tsx` loads with `React.lazy`, keeping Monaco out of
+the main chunk) bundles `monaco-editor` locally and calls `loader.config({ monaco })`, so nothing loads from a CDN (ADR-011).
+Workers come from Vite `?worker` imports (`monaco-editor/editor/editor.worker`, `monaco-editor/language/typescript/ts.worker`)
+registered on `self.MonacoEnvironment.getWorker`; the JS/TS worker serves `javascript`, everything else uses the editor worker.
+JSX highlighting and the `dark-plus` theme come from Shiki via `@shikijs/monaco` (ADR-013). `CodeEditor` uses `onMount`;
+the Format button runs async `prettier/standalone` with the babel and estree plugins. The markdown cell uses
+`@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`.
+
 ## Persistence
 
 - Autosave: `persistMiddleware` watches MOVE_CELL, UPDATE_CELL, INSERT_CELL_AFTER, DELETE_CELL,
@@ -136,9 +146,7 @@ resolve (unpkg redirects to concrete versions/files).
 
 Vite 8 with `@vitejs/plugin-react` (`vite.config.ts`): `base: "/js-browser/"`, root `index.html` with
 `<script type="module" src="/src/index.tsx">`, static files from `public/` (favicon, icons, `manifest.json`,
-`robots.txt`), output in `dist/`. `define: { global: "globalThis" }` supports browser-side libs that expect Node's
-`global`; `assert` is an explicit dependency because jscodeshift/recast require it (Vite does not polyfill Node
-builtins). Scripts: `dev`, `build`, `preview`. Node 24 (`.nvmrc`, `engines`), npm. The `process.env.NODE_ENV` in
+`robots.txt`), output in `dist/`. Scripts: `dev`, `build`, `preview`. Node 24 (`.nvmrc`, `engines`), npm. The `process.env.NODE_ENV` in
 `bundler/index.ts` is an esbuild `define` for user code, not a Vite env var.
 Deployment (ADR-002): `.github/workflows/deploy.yml` runs on push to `main` and `workflow_dispatch`. The `build` job
 checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run build`, then `configure-pages` and
@@ -155,7 +163,7 @@ Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.
 |------|-----|--------|-------|
 | Build/dev | Vite (done) | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
 | Bundler | esbuild-wasm 0.28.2, `initialize` once + `build`, wasm via Vite `?url` (done) | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
-| Editor/UI | Monaco wrapper 3.7.5, jsx-highlighter, md-editor 2.1.1, FA 5 | current majors; `onMount` API; highlighter replaced/upgraded; Redux Toolkit decision | JSB-004 |
+| Editor/UI | Monaco 0.57 bundled locally (wrapper 4.7, Shiki highlighting), md-editor 4, Prettier 3, React 19, FA 7 (done) | current majors; Redux Toolkit decision | JSB-004 |
 | Deploy | GitHub Actions workflow added (pending live verification) | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
 | Quality | ESLint, Prettier, Vitest, CI on PRs (done) | same | JSB-006 |
 | Cleanup | stale files/code, outdated README | removed/refreshed; MIT LICENSE | JSB-007, 008, 009 |

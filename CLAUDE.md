@@ -15,16 +15,15 @@ Architecture details: `docs/architecture.md`. Decisions: `docs/decisions.md`. Wo
 ## Tech stack
 
 Current:
-- React 18, Redux 4 (`createStore`, redux-thunk, immer `produce` reducers), TypeScript 5
+- React 19, Redux 5 (`legacy_createStore`, redux-thunk 3, immer 11 `produce` reducers), react-redux 9, TypeScript 5
 - Vite 8 + @vitejs/plugin-react (`vite.config.ts`, `base: "/js-browser/"`, output `dist/`), Node 24 + npm
-- Monaco via @monaco-editor/react 3.7.5 (+ monaco-jsx-highlighter, jscodeshift, prettier 2 for Format)
+- Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts`, ADR-011); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
-- Bulma (bulmaswatch superhero) + Font Awesome 5; streamsaver for book download
-- npm `overrides` pin legacy peers (monaco-editor/react) to the installed versions until JSB-004.
-- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 2.8 (`.prettierrc`; same package as the in-editor Format runtime dep until JSB-004), Vitest 5 (node environment).
+- Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
+- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment).
 - Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build on PRs to `dev`/`main` and pushes to `dev`.
 
-Target (see stories JSB-004, JSB-014): current Monaco (bundled locally)/md-editor/other deps, Redux Toolkit.
+Target (see JSB-014): Redux Toolkit.
 
 ## Commands
 
