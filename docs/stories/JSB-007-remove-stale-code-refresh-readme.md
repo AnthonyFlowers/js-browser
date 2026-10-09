@@ -26,3 +26,12 @@ As a maintainer, I want dead files and code removed and the README brought up to
 JSB-006 already fixed (do not duplicate): unused `useState` import in `App.tsx`; `Function`/`Boolean` types, `let` -> `const`, and `case` declarations flagged by lint. `console.log("saved")`, `public/test.html`, the `files` reducer and the `ActionButto` typo are still open.
 
 Known: the title `<input>` in `top-menu.tsx` is currently `disabled`, which is part of why README item "switch between books" is unfinished (see JSB-010).
+
+Review nits from PR #1 to address here:
+
+- [ ] `index.html` hardcodes `/js-browser/` in 4 places (favicon, apple-touch-icon, manifest) duplicating Vite `base`; use root-relative paths and let Vite apply `base`.
+- [ ] `fetch-plugin` cache version bump leaves old unprefixed/v1 entries in IndexedDB forever; consider a one-time cleanup of non-current keys.
+- [ ] Cached JSON/non-JS unpkg files are loaded with the `jsx` loader (old behaviour); consider choosing the loader by extension (`.json` -> `json`).
+- [ ] `unpkg-path-plugin`: root-absolute imports like `/npm/x` become `https://unpkg.com//npm/x`; map `^/` to `https://unpkg.com` + path.
+- [ ] Bundler `define.global` is `"window"` while the app uses `"globalThis"`; align or document.
+- [ ] 3.7 MB main chunk warning; consider code-splitting (may be addressed by the JSB-004 Monaco worker setup).
