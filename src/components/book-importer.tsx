@@ -15,7 +15,7 @@ const BookImporter = () => {
   };
 
   const fileReader = new FileReader();
-  fileReader.onloadend = (e: ProgressEvent<FileReader>) => {
+  fileReader.onloadend = () => {
     const readFile = fileReader.result;
     if (readFile && typeof readFile === "string") {
       importCells(readFile);
