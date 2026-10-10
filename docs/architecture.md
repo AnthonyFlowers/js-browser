@@ -78,8 +78,8 @@ sequenceDiagram
   CC->>B: bundle(cumulativeCode)
   B-->>S: fulfilled {code, err}
   S-->>P: Preview props (code, err)
-  P->>P: set srcdoc, wait 200ms
-  P->>P: postMessage(code) -> eval in iframe
+  P->>P: new iframe (key=code) loads srcdoc shell
+  P->>P: on load: postMessage(code) -> eval in iframe
 ```
 
 1. `useCumulativeCode(cellId)` walks `order`, and for every code cell up to and including `cellId` appends
@@ -90,8 +90,8 @@ sequenceDiagram
 3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors (including network
    failures and the 120 s deadline) are caught and returned as `err` text. `bundlesSlice` stores the thunk
    `requestId` per cell and ignores a result from a superseded request.
-4. `Preview` writes a fixed HTML shell into `iframe.srcdoc` (`sandbox="allow-scripts"`), then after 200 ms posts
-   the bundle to it; the shell `eval`s messages and renders runtime errors in red.
+4. `Preview` renders an iframe keyed by the bundle code (`sandbox="allow-scripts"`, fixed HTML shell in `srcDoc`) and
+   posts the bundle to it from the iframe `load` event (no timer, so a slow load cannot drop it); the shell `eval`s messages and renders runtime errors in red.
 
 ## Bundler plugin pipeline
 
