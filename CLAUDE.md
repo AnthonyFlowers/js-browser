@@ -53,7 +53,7 @@ src/components/             one .tsx + one .css per component (cell-list, code-c
                             text-editor, preview, resizable, top-menu, book-importer, add-cell, action-bar...)
 src/hooks/                  use-actions (bound action creators), use-typed-selector,
                             use-cumulative-code (concatenates code of cells 1..N + show() helper)
-src/state/                  store.ts, reducers/ (cells, bundles, files), actions/, action-types/,
+src/state/                  store.ts, reducers/ (cells, bundles), actions/, action-types/,
                             action-creators/ (cells, bundles, fetchCells = persistence + book IO),
                             middlewares/persist-middleware.ts (debounced save), cell.ts (Cell type)
 src/bundler/                index.ts (esbuild initialize/build) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
