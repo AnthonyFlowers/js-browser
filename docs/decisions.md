@@ -162,6 +162,8 @@ a ~14 MB (about 3.8 MB gzipped) asset that is fetched on first bundle. User pack
 **Context:** A merge to `main` deploys to GitHub Pages, so `main` should only change deliberately. Work was previously
 committed on a single working branch.
 
+**Amended by ADR-017** (story work merges into `dev` without a PR).
+
 **Decision:** `dev` is a long-lived branch holding in-progress work (created from `main`). Story/feature branches open
 PRs into `dev` and are merged once CI is green. Releases are `dev` -> `main` PRs, opened by Claude and merged by the
 owner; the merge deploys to GitHub Pages. Nobody pushes directly to `main` or `dev`. Deleting branches (`gh-pages`,
@@ -257,4 +259,18 @@ Preview `show()` now renders JSX with `react-dom/client` `createRoot`, because u
 **Decision:** Drop `useActions` and `useTypedSelector`; provide `useAppDispatch` and `useAppSelector` built with react-redux's `.withTypes<AppDispatch>()` / `.withTypes<RootState>()`, the pattern recommended by RTK. Components import action creators from `src/state` and call `dispatch(...)`.
 
 **Consequences:** Call sites are slightly more verbose but fully typed, including thunk results (`unwrap()`); `dispatch` is stable so it replaces the bound actions in effect dependency lists.
+
+## ADR-017: Merge story work into `dev` without PRs
+
+- **Date:** 2026-10-10
+- **Status:** Accepted
+- **Story:** JSB-015
+
+**Context:** PRs into `dev` added a round trip per story without a reviewer in the loop; CI already runs on every push
+to `dev`.
+
+**Decision:** Story branches are merged directly into `dev` and pushed once lint, format check, typecheck, tests and
+build pass locally. `dev` -> `main` release PRs remain, opened by Claude and merged by the owner. Amends ADR-010.
+
+**Consequences:** Faster integration; a red CI run on `dev` must be fixed immediately since there is no PR gate.
 

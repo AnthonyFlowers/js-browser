@@ -37,7 +37,7 @@ npm run typecheck       # tsc --noEmit
 npm test                # Vitest (vitest run)
 ```
 
-CI runs `lint`, `format:check`, `typecheck`, `test` and `build`; run them all before opening a PR.
+CI runs `lint`, `format:check`, `typecheck`, `test` and `build`; run them all before merging into `dev` or opening a PR.
 Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsSlice.test.ts` beside `cellsSlice.ts`);
 bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
 
@@ -104,9 +104,10 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 5. Record any significant technical choice as a new ADR in `docs/decisions.md`.
 6. Keep `docs/architecture.md` current whenever structure or data flow changes.
 7. Do not commit unless asked.
-8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch and opens a PR into `dev`;
-   merge it once CI is green. Releases are `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge
-   to `main` deploys to GitHub Pages). Never push directly to `main` or `dev`.
+8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch; once all local checks pass,
+   merge it into `dev` and push (no PR needed; CI runs on every push to `dev` and must stay green). Releases are
+   `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge to `main` deploys to GitHub Pages).
+   Never push directly to `main` (ADR-017).
 9. Deleting any branch (e.g. `gh-pages`, `local-serve`) requires explicit owner confirmation after showing the
    owner what is on it.
 
