@@ -23,3 +23,7 @@ Cause (JSB-029 investigation): Monaco's hidden textarea (`textAreaEditContext.js
 line's top on iPhone, because only `isMacintosh` or accessibility mode gives it the line height. iOS draws the handles around
 the selection inside that textarea. Options: (1) a CSS override making `.inputarea` line-height tall, tried on the phone;
 (2) a small patch of Monaco's iOS branch (patch-package); (3) EditContext (not available in Safari). Each needs a real-device check.
+
+JSB-031 added a selection check to the page-scroll hook: while the editor selection is non-empty the swipe is not forwarded to
+the page (so dragging a selection does not scroll the page). Any handles fix must keep this working: handle drags must still
+leave the selection non-empty and must not start page scrolling.

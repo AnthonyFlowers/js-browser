@@ -33,7 +33,7 @@ Owner results for the JSB-019 checklist: items 2, 4, 5 and 6 passed, JSB-016 (it
 ## Implementation notes
 
 - Preview: the iframe `srcDoc` now sets `overflow-wrap: anywhere; word-break: break-word` on `body`, `pre-wrap` on `pre` and
-  `max-width: 100%` on images/video/canvas/svg. JSX output is unaffected (only wrapping rules).
+  `max-width: 100%` on images/video/canvas/svg. Superseded by JSB-031: `anywhere`/`word-break` changed min-content sizing of JSX tables and flex rows, so only `overflow-wrap: break-word` remains.
 - Editor swipe: `src/hooks/use-page-scroll-on-touch.ts` adds passive touch listeners to the editor wrapper (narrow layout only,
   single finger). Per touchmove it asks `shouldScrollPage` (`src/hooks/page-scroll.ts`, unit-tested) whether the editor can still
   scroll in that direction (`getScrollTop`, `getScrollHeight`, `getLayoutInfo().height`); if not it calls `window.scrollBy(0, delta)`.

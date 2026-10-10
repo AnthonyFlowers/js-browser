@@ -28,7 +28,7 @@ graph TD
 ```
 
 - `TopMenu`: book title input (currently `disabled`), "Save Book" (`exportCells`), "Load Book" toggle for `BookImporter`.
-- Editor swipe (JSB-029): `hooks/use-page-scroll-on-touch.ts` forwards a vertical swipe on the Monaco editor to `window.scrollBy` when the editor cannot scroll further (`hooks/page-scroll.ts`); narrow layout only.
+- Editor swipe (JSB-029): `hooks/use-page-scroll-on-touch.ts` forwards a vertical swipe on the Monaco editor to `window.scrollBy` when the editor cannot scroll further (`hooks/page-scroll.ts`); narrow layout only, only for single-finger vertical swipes that start inside the editor's DOM and are not dragging a selection (JSB-031).
 - Mobile layout (JSB-019): below 768 px (`NARROW_QUERY` in `hooks/use-media-query.ts`, mirrored by `max-width: 767px` in the CSS)
   `CodeCell` renders the editor in a vertical `Resizable` (min height 120 px) with a full-width preview below, instead of the
   side-by-side flex row with the horizontal handle; `TextEditor` edits without the live split. Touch devices

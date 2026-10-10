@@ -14,8 +14,7 @@ const html = `
     background-color: white;
   }
   body {
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
   }
   img, video, canvas, svg {
     max-width: 100%;

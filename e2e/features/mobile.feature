@@ -96,3 +96,28 @@ Feature: Phone layout and touch
     Then a .book file is downloaded containing "loaded from a book"
     And the downloaded file does not end in ".json"
     And the saved blob type is not "application/json"
+
+  Scenario: A swipe on a short editor scrolls the page
+    When I load the book file "e2e/fixtures/mobile.book"
+    Then the book has 3 cells
+    And the page is at least 150 px taller than the screen
+    When I scroll the page to the top
+    And I swipe up 120 px starting on the code of cell 1
+    Then the page has scrolled down
+
+  Scenario: A swipe starting on the Format button is left to the browser
+    When I load the book file "e2e/fixtures/mobile.book"
+    Then the book has 3 cells
+    And the page is at least 150 px taller than the screen
+    When I scroll the page to the top
+    And I count the page scroll calls made by the app
+    And I swipe up 120 px starting on the Format button of cell 1
+    Then the app has not scrolled the page itself
+
+  Scenario: A sideways swipe on the editor does not scroll the page
+    When I load the book file "e2e/fixtures/mobile.book"
+    Then the book has 3 cells
+    And the page is at least 150 px taller than the screen
+    When I scroll the page to the top
+    And I swipe left 120 px with 30 px of vertical drift starting on the code of cell 1
+    Then the page has not scrolled
