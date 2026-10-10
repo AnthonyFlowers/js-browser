@@ -64,7 +64,6 @@ export const exportCells = () => {
     new Response(stringifiedBook).body
       ?.pipeTo(fileStream)
       .then(() => {
-        console.log("saved");
         dispatch({ type: ActionType.EXPORT_BOOK_SUCCESS });
       })
       .catch((err) => {

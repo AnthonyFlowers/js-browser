@@ -3,7 +3,7 @@ interface ActionButtonProps {
   icon: string;
 }
 
-export const ActionButto: React.FC<ActionButtonProps> = ({ action, icon }) => {
+export const ActionButton: React.FC<ActionButtonProps> = ({ action, icon }) => {
   return (
     <button className="button is-primary is-small" onClick={() => action()}>
       <span className="icon">

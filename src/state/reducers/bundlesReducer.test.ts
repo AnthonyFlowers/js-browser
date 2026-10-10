@@ -4,7 +4,9 @@ import { ActionType } from "../action-types";
 
 describe("bundlesReducer", () => {
   it("starts empty", () => {
-    expect(reducer(undefined, { type: ActionType.EXPORT_BOOK })).toEqual({});
+    expect(
+      reducer(undefined, { type: ActionType.EXPORT_BOOK_SUCCESS })
+    ).toEqual({});
   });
 
   it("BUNDLE_START marks a cell as loading with empty output", () => {
