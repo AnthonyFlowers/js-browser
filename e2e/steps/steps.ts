@@ -293,6 +293,15 @@ When(
 );
 
 When("I tap Save Book", async ({ page, world }) => {
+  await page.evaluate(() => {
+    const w = window as unknown as { __blobTypes: string[] };
+    w.__blobTypes = [];
+    const original = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = (obj: Blob | MediaSource) => {
+      if (obj instanceof Blob) w.__blobTypes.push(obj.type);
+      return original(obj);
+    };
+  });
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Save Book" }).tap();
   world.download = await download;
@@ -382,6 +391,39 @@ Then(
     );
   }
 );
+
+Then(
+  "the preview of cell {int} shows the start of {string}",
+  async ({ page }, number: number, text: string) => {
+    await expect(previewRoot(cellAt(page, number))).toContainText(text);
+  }
+);
+
+Then(
+  "the preview of cell {int} does not scroll horizontally",
+  async ({ page }, number: number) => {
+    const frame = cellAt(page, number).frameLocator(
+      "iframe[title='code-executor']"
+    );
+    await expect(frame.locator("#root")).not.toBeEmpty();
+    const overflow = await frame
+      .locator("html")
+      .evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  }
+);
+
+Then("the downloaded file does not end in {string}", async ({ world }, ext) => {
+  expect(world.download?.suggestedFilename().endsWith(ext)).toBe(false);
+});
+
+Then("the saved blob type is not {string}", async ({ page }, type: string) => {
+  const types = await page.evaluate(
+    () => (window as unknown as { __blobTypes: string[] }).__blobTypes
+  );
+  expect(types.length).toBeGreaterThan(0);
+  expect(types).not.toContain(type);
+});
 
 Then(
   "a .book file is downloaded containing {string}",

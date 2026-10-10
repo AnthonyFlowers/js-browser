@@ -1,6 +1,7 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import { EDITOR_THEME } from "../monaco-setup";
+import { usePageScrollOnTouch } from "../hooks/use-page-scroll-on-touch";
 import "./code-editor.css";
 
 interface CodeEditorProps {
@@ -20,6 +21,8 @@ const describeFormatError = (err: unknown) => {
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const [formatError, setFormatError] = useState<string | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  usePageScrollOnTouch(wrapperRef, editorRef);
 
   const onEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -56,7 +59,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
   }
 
   return (
-    <div className="editor-wrapper">
+    <div className="editor-wrapper" ref={wrapperRef}>
       <button
         className="button buton-format is-primary is-small button-format"
         onClick={onFormatClick}

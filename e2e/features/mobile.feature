@@ -80,3 +80,19 @@ Feature: Phone layout and touch
     Then the book has 2 cells
     When I tap Save Book
     Then a .book file is downloaded containing "loaded from a book"
+
+  Scenario: A long unbroken string wraps in the preview
+    When I add a code cell
+    And I enter the code:
+      """
+      show("2222211111aaahx".repeat(40))
+      """
+    Then the preview of cell 1 shows the start of "2222211111aaahx"
+    And the preview of cell 1 does not scroll horizontally
+
+  Scenario: Save Book names the file after the book and does not label it JSON
+    When I load the book file "e2e/fixtures/sample.book"
+    And I tap Save Book
+    Then a .book file is downloaded containing "loaded from a book"
+    And the downloaded file does not end in ".json"
+    And the saved blob type is not "application/json"

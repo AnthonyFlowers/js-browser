@@ -13,6 +13,16 @@ const html = `
   html {
     background-color: white;
   }
+  body {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  img, video, canvas, svg {
+    max-width: 100%;
+  }
+  pre {
+    white-space: pre-wrap;
+  }
   </style>
   </head>
   <body>

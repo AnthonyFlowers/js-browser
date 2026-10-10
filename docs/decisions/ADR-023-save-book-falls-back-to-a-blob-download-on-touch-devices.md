@@ -15,5 +15,9 @@ absent on iOS. On touch devices the Load Book `<input type=file>` drops its `acc
 files whose extension it does not know; desktop keeps `.book`.
 
 **Consequences:** The Blob path is covered by an e2e scenario (Chromium with iPhone 13 emulation). iOS Safari's handling of
-`<a download>` (Files download prompt) has not been confirmed on a real device; see the checklist in JSB-019. The `.book` file
-is saved as `application/json`, so iOS may offer a share or "Save to Files" dialog rather than silently downloading.
+`<a download>` (Files download prompt) has not been confirmed on a real device; see the checklist in JSB-019. iOS may offer a share or
+"Save to Files" dialog rather than silently downloading.
+
+**Update (JSB-029):** the Blob type is now `application/octet-stream`. With `application/json` iOS Safari saved
+`<title>.book.json`. Load Book accepts `.book` and `.json` on desktop (no filter on touch), so `.book.json` files saved earlier
+still load.
