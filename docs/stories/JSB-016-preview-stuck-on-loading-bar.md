@@ -18,7 +18,7 @@ A book with four code cells and one text cell:
 3. `import { format } from "date-fns"` stayed on the grey indeterminate progress bar.
 4. `import "bulma/css/bulma.css"` stayed on the grey indeterminate progress bar.
 
-About two minutes later (it is unclear whether the page was reloaded or the cells were edited), cells 3 and 4 rendered
+The owner then deleted cells 3 and 4 and added them back with the same code; the new cells rendered
 correctly ("Today is Friday, Oct 9 and nums has 4 items" and a styled Bulma button). No error was shown in either state.
 
 | Stuck | Loaded later |
@@ -26,7 +26,7 @@ correctly ("Today is Friday, Oct 9 and nums has 4 items" and a styled Bulma butt
 | ![Cells 3 and 4 stuck on the loading bar](assets/JSB-016-stuck-loading.png) | ![All cells rendered](assets/JSB-016-loaded.png) |
 
 Steps to reproduce: not yet known. Likely conditions are the first import of a package that is not yet cached in
-IndexedDB, on a slow or mobile connection.
+IndexedDB, on a slow or mobile connection. Workaround: delete the cell and add it again.
 
 ## Acceptance Criteria
 
@@ -51,4 +51,7 @@ Hypotheses to check:
 - **Missing dispatch:** a cell whose bundle is never started (`bundle` undefined) also shows the bar; check the
   debounce/effect in `code-cell.tsx` for a path that skips `createBundle`.
 
-Ask the owner whether the second screenshot followed a reload, an edit, or just waiting.
+Recovery (owner, 2026-10-10): the stuck cells recovered only after being deleted and re-added. A new cell gets a new id
+and a fresh `createBundle` run, and by then the packages were likely cached. This points away from "just slow" and
+toward a bundle for the original cell ids that never settled (hung request) or was never started; it is not yet known
+whether waiting longer would have recovered them.
