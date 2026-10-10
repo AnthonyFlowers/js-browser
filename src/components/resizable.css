@@ -1,5 +1,8 @@
 .react-resizable-handle {
+  position: relative;
+  z-index: 30;
   display: block;
+  touch-action: none;
   background-color: #37414b;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -23,4 +26,25 @@
 .resize-horizontal {
   display: flex;
   flex-direction: row;
+}
+
+/* Invisible 44 px hit area around the thin handles for fingers. */
+@media (pointer: coarse), (max-width: 767px) {
+  .react-resizable-handle-s::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -17px;
+    height: 44px;
+  }
+
+  .react-resizable-handle-e::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -17px;
+    width: 44px;
+  }
 }

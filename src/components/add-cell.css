@@ -32,3 +32,24 @@
   width: 95%;
   z-index: -1;
 }
+
+/* No hover on touch screens, so the strip is always visible. */
+@media (hover: none) {
+  .add-cell {
+    opacity: 1;
+  }
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .add-cell .add-buttons button {
+    min-height: 44px;
+    min-width: 44px;
+    padding-inline: 1.25em;
+  }
+}
+
+@media (max-width: 767px) {
+  .add-cell .add-buttons button {
+    margin: 0 10px;
+  }
+}

@@ -16,3 +16,17 @@
 .editor-wrapper:hover .button-format {
   opacity: 1;
 }
+
+/* No hover on touch screens, so the Format button stays visible. */
+@media (hover: none) {
+  .editor-wrapper .button-format {
+    opacity: 1;
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Monaco's iPad "show keyboard" widget covers the code on iOS; tapping the editor already opens the keyboard. */
+.monaco-editor .iPadShowKeyboard {
+  display: none;
+}

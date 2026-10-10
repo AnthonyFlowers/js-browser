@@ -41,3 +41,38 @@ export const moveCell = (cell: Locator, direction: "up" | "down") =>
 
 export const deleteCell = (cell: Locator) =>
   cell.locator(".action-bar button:has(i.fa-times)").click();
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export const centerOf = async (locator: Locator): Promise<Point> => {
+  const box = await locator.boundingBox();
+  if (!box) throw new Error("Element has no bounding box");
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+};
+
+/** Drags with real touch events (Chromium DevTools protocol); Playwright has no touch drag API. */
+export const touchDrag = async (page: Page, from: Point, to: Point) => {
+  const cdp = await page.context().newCDPSession(page);
+  const send = (
+    type: "touchStart" | "touchMove" | "touchEnd",
+    touchPoints: Point[]
+  ) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints });
+  await send("touchStart", [from]);
+  const steps = 8;
+  for (let i = 1; i <= steps; i++) {
+    await send("touchMove", [
+      {
+        x: from.x + ((to.x - from.x) * i) / steps,
+        y: from.y + ((to.y - from.y) * i) / steps,
+      },
+    ]);
+  }
+  await send("touchEnd", []);
+  await cdp.detach();
+};
+
+export const hasHorizontalScroll = (page: Page) =>
+  page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);

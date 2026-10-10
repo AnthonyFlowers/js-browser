@@ -28,6 +28,12 @@ graph TD
 ```
 
 - `TopMenu`: book title input (currently `disabled`), "Save Book" (`exportCells`), "Load Book" toggle for `BookImporter`.
+- Mobile layout (JSB-019): below 768 px (`NARROW_QUERY` in `hooks/use-media-query.ts`, mirrored by `max-width: 767px` in the CSS)
+  `CodeCell` renders the editor in a vertical `Resizable` (min height 120 px) with a full-width preview below, instead of the
+  side-by-side flex row with the horizontal handle; `TextEditor` edits without the live split. Touch devices
+  (`pointer: coarse` / `hover: none`) get 44 px targets for `ActionBar`, `AddCell`, `TopMenu` and the Format button, always-visible
+  AddCell/Format controls, a 44 px invisible hit area on resize handles (`touch-action: none`), and Monaco's iPad "show keyboard"
+  widget is hidden. `TextEditor` also leaves edit mode on a touch `pointerup` outside (iOS does not fire `click` there).
 - `CellList`: calls `fetchCells("default")` on mount; renders `AddCell` before and after every cell.
 - `CodeCell`: owns the bundling effect; shows a progress bar while `bundle` is missing/loading, else `Preview`.
 - `TextEditor`: click to edit markdown; a capture-phase document click listener leaves edit mode on outside click.
@@ -145,8 +151,8 @@ the Format button runs async `prettier/standalone` with the babel and estree plu
 - Load: `fetchCells(title)` reads that key (empty "default" book if missing). Called once from `CellList` with `"default"`.
 - Package cache: localforage instance `filecache`, key = resolved unpkg URL, value = esbuild `OnLoadResult`.
   No invalidation.
-- Book export: `exportCells` JSON-stringifies the `cells` slice and streams it with `streamsaver` to
-  `<title>.book`.
+- Book export: `exportCells` JSON-stringifies the `cells` slice and passes it to `downloadBook` (`thunks/download-book.ts`,
+  ADR-023): `streamsaver` on desktop, a Blob plus temporary `<a download>` on touch devices or without a service worker.
 - Book import: `BookImporter` reads a `.book` file as text, `importCells` parses JSON and requires `data`, `order`,
   `title`; fulfils with the book (replaces order/data/title; saved to cache only once edited, via middleware).
 - `getCachedBooks()` (lists `cellcache` keys) exists but is not used by any component.
@@ -168,7 +174,7 @@ Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.
 
 ## End-to-end tests (JSB-017, JSB-026, ADR-021, ADR-022)
 
-`playwright.config.ts` runs Chromium against the production build: its `webServer` runs `npm run build` (skipped with
+`playwright.config.ts` runs Chromium (projects `chromium` for everything except `@mobile` features, and `mobile`, the iPhone 13 device profile in Chromium, for `e2e/features/mobile.feature`; touch drags use CDP `Input.dispatchTouchEvent` in `e2e/app.ts`) against the production build: its `webServer` runs `npm run build` (skipped with
 `E2E_SKIP_BUILD`) then `vite preview` on port 4173 (base `/js-browser/`). Tests are Gherkin scenarios in `e2e/features/*.feature` with steps in `e2e/steps/` (`playwright-bdd`; `npm run test:e2e`
 runs `bddgen`, which generates Playwright specs into the gitignored `.features-gen/`, then `playwright test`). Each test gets a
 fresh browser context, so IndexedDB (cells and the file cache) starts empty. `e2e/mock-unpkg.ts` fulfills every

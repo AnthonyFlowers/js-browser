@@ -25,3 +25,18 @@
     opacity: 1;
   }
 }
+
+.code-cell-stacked .stacked-editor {
+  height: calc(100% - 10px);
+  width: 100%;
+}
+
+.code-cell-stacked .stacked-editor .editor-wrapper {
+  width: 100%;
+}
+
+.code-cell-stacked .progress-wrapper {
+  height: 40vh;
+  min-height: 200px;
+  width: 100%;
+}

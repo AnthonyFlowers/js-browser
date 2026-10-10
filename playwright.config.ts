@@ -25,9 +25,22 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      grepInvert: /@mobile/,
       use: {
         ...devices["Desktop Chrome"],
         // Local sandboxes ship their own Chromium build; CI installs the matching one.
+        launchOptions: {
+          executablePath: process.env.PW_CHROMIUM_PATH || undefined,
+        },
+      },
+    },
+    {
+      // Touch, iOS-sized viewport and iOS user agent, run in Chromium (WebKit is not installed).
+      name: "mobile",
+      grep: /@mobile/,
+      use: {
+        ...devices["iPhone 13"],
+        defaultBrowserType: "chromium",
         launchOptions: {
           executablePath: process.env.PW_CHROMIUM_PATH || undefined,
         },

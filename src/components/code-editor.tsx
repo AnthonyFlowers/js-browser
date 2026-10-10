@@ -60,6 +60,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
           fontSize: 18,
           scrollBeyondLastLine: false,
           automaticLayout: true,
+          scrollbar: { alwaysConsumeMouseWheel: false },
         }}
       />
     </div>

@@ -5,9 +5,15 @@ import "./resizable.css";
 interface ResizableProps {
   direction: "horizontal" | "vertical";
   children?: React.ReactElement;
+  /** Smallest height in px of a vertical box; defaults to a thin strip. */
+  minHeight?: number;
 }
 
-const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
+const Resizable: React.FC<ResizableProps> = ({
+  direction,
+  children,
+  minHeight = 48,
+}) => {
   let resizableProps: ComponentProps<typeof ResizableBox>;
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
@@ -50,7 +56,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       height: 300,
       width: Infinity,
       resizeHandles: ["s"],
-      minConstraints: [Infinity, 48],
+      minConstraints: [Infinity, minHeight],
       maxConstraints: [Infinity, innerHeight * 0.9],
     };
   }

@@ -47,7 +47,7 @@ npm run test:e2e        # Gherkin e2e: bddgen, builds, serves `vite preview` on 
 CI runs `lint`, `format:check`, `typecheck` (app and `e2e/`), `test` and `build`, plus `test:e2e` in a separate job; run them all before merging into `dev` or opening a PR.
 Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsSlice.test.ts` beside `cellsSlice.ts`);
 bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
-E2E tests are Gherkin `.feature` files in `e2e/features/` with steps in `e2e/steps/`, compiled by playwright-bdd into the
+E2E tests are Gherkin `.feature` files (tag a feature `@mobile` to run it only in the iPhone-emulated `mobile` project) in `e2e/features/` with steps in `e2e/steps/`, compiled by playwright-bdd into the
 gitignored `.features-gen/` (Vitest ignores them). `e2e/mock-unpkg.ts` serves unpkg.com from `e2e/fixtures/unpkg/`
 (stub `react`, `react-dom/client`, a helper and a CSS package) with `stall`/`slow` modes and a capped XHR timeout; use it
 for any test that needs packages or a stalled/slow network. `e2e/app.ts` has the page helpers (add cell, set code, preview).
@@ -61,7 +61,7 @@ There is no manual deploy command (see Deployment).
 src/index.tsx, App.tsx      entry; Provider + TopMenu + CellList
 src/components/             one .tsx + one .css per component (cell-list, code-cell, code-editor,
                             text-editor, preview, resizable, top-menu, book-importer, add-cell, action-bar...)
-src/hooks/                  use-app-dispatch, use-app-selector (typed react-redux hooks),
+src/hooks/                  use-media-query (narrow breakpoint 767px, mirrored in CSS), use-app-dispatch, use-app-selector (typed react-redux hooks),
                             use-cumulative-code (concatenates code of cells 1..N + show() helper)
 src/state/                  store.ts (configureStore, AppDispatch), reducers.ts (RootState), slices/ (cells, bundles),
                             thunks/ (createBundle; fetch/save/export/import cells = persistence + book IO),

@@ -43,3 +43,4 @@ history (supersede or amend with a new ADR instead, and link the related ADRs wi
 - [ADR-020: Folder as story status, one file per ADR, and Claude session tooling](ADR-020-folder-as-status-one-file-per-adr-and-claude-session-tooling.md)
 - [ADR-021: Playwright end-to-end tests with fixture-routed unpkg](ADR-021-playwright-e2e-with-fixture-routed-unpkg.md)
 - [ADR-022: Gherkin e2e scenarios with playwright-bdd (amends ADR-021)](ADR-022-gherkin-e2e-scenarios-with-playwright-bdd.md)
+- [ADR-023: Save Book falls back to a Blob download on touch devices](ADR-023-save-book-falls-back-to-a-blob-download-on-touch-devices.md)

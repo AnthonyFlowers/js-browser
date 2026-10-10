@@ -5,3 +5,9 @@
 .react-draggable-transparent-selection .cell-list {
   margin-bottom: 100vh;
 }
+
+@media (max-width: 767px) {
+  .cell-list {
+    margin-inline: 8px;
+  }
+}

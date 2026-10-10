@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import localforage from "localforage";
-import * as fs from "streamsaver";
 import { Book } from "../cell";
 import type { RootState } from "../reducers";
+import { downloadBook } from "./download-book";
 
 const cellsCache = localforage.createInstance({
   name: "cellcache",
@@ -31,8 +31,7 @@ export const exportCells = createAsyncThunk<void, void, { state: RootState }>(
   async (_, { getState }) => {
     const { cells } = getState();
     const stringifiedBook = JSON.stringify(cells, null, 2);
-    const fileStream = fs.createWriteStream(`${cells.title}.book`);
-    await new Response(stringifiedBook).body?.pipeTo(fileStream);
+    await downloadBook(`${cells.title}.book`, stringifiedBook);
   }
 );
 
