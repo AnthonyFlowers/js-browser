@@ -47,3 +47,4 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-013 | Per-model auto-compact settings | In Progress | [JSB-013](JSB-013-per-model-autocompact-settings.md) |
 | JSB-014 | Migrate state to Redux Toolkit | Done | [done/JSB-014](../done/JSB-014-migrate-state-to-redux-toolkit.md) |
 | JSB-015 | Adopt dev branch workflow | Done | [done/JSB-015](../done/JSB-015-adopt-dev-branch-workflow.md) |
+| JSB-016 | Code cell preview sometimes stays on the loading bar | Todo | [JSB-016](JSB-016-preview-stuck-on-loading-bar.md) |
