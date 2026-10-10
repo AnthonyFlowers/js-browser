@@ -78,9 +78,11 @@ GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` 
 
 ## Roadmap
 
+- Stability sweep first: [E2E tests](docs/stories/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/stories/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/stories/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
 - [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
 - [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
 - [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)
+- Later: share a book by URL (JSB-021), TypeScript cells (JSB-022), console output (JSB-023), offline/PWA (JSB-024)
 
 ## License
 

@@ -2,8 +2,8 @@
 
 - **Status:** Todo
 - **Type:** Bug
-- **Priority:** Medium
-- **Depends on:** none
+- **Priority:** High
+- **Depends on:** JSB-018
 
 ## Description
 
@@ -37,6 +37,8 @@ IndexedDB, on a slow or mobile connection. Workaround: delete the cell and add i
 - [ ] Verified on the live site on mobile after release
 
 ## Notes
+
+Relationship: JSB-018 (timeouts, retries, clear errors) is the main fix and is done first; this story depends on it. This story remains for root-cause identification, the regression test of the original failure mode, and the live-site check on mobile. Part of the stability sweep (priority raised to High).
 
 The grey bar is the Bulma `progress` element in `src/components/code-cell.tsx`, shown while `!bundle || bundle.loading`.
 
