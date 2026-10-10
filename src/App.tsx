@@ -1,5 +1,6 @@
 import "bulmaswatch/superhero/bulmaswatch.min.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
 import "./App.css";
 import { Provider } from "react-redux";
 import { store } from "./state";

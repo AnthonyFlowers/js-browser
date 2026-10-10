@@ -66,6 +66,10 @@ When("I enter the markdown:", async ({ page, world }, markdown: string) => {
   await page.locator(".top-menu").click();
 });
 
+When("I click Format in cell {int}", async ({ page }, number: number) => {
+  await cellAt(page, number).getByRole("button", { name: "Format" }).click();
+});
+
 When("I move cell {int} up", async ({ page }, number: number) => {
   await moveCell(cellAt(page, number), "up");
 });

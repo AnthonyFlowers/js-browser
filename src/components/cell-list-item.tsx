@@ -1,8 +1,11 @@
 import "./cell-list-item.css";
+import { lazy, Suspense } from "react";
 import { Cell } from "../state";
 import CodeCell from "./code-cell";
-import TextEditor from "./text-editor";
 import ActionBar from "./action-bar";
+
+// The markdown stack (react-md-editor, refractor, micromark) is only fetched once a text cell exists.
+const TextEditor = lazy(() => import("./text-editor"));
 
 interface CellListItemProps {
   cell: Cell;
@@ -22,7 +25,15 @@ const CellListItem: React.FC<CellListItemProps> = ({ cell }) => {
   } else {
     child = (
       <>
-        <TextEditor cell={cell} />
+        <Suspense
+          fallback={
+            <div className="text-editor card">
+              <div className="card-content" aria-busy="true" />
+            </div>
+          }
+        >
+          <TextEditor cell={cell} />
+        </Suspense>
         <ActionBar id={cell.id} />
       </>
     );

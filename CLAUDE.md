@@ -23,7 +23,7 @@ Architecture details: `docs/architecture.md`. Decisions: `docs/decisions/` (one 
 Current:
 - React 19, Redux Toolkit 2 (`configureStore`, `createSlice`, `createAsyncThunk`, listener middleware; ADR-012/015/016), react-redux 9, TypeScript 5
 - Vite 8 + @vitejs/plugin-react (`vite.config.ts`, `base: "/js-browser/"`, output `dist/`), Node 24 + npm
-- Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts`, ADR-011); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4
+- Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts` imports `editor.api` + selected contributions, ADR-011/024); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4 (md-editor, Prettier and streamsaver are lazy-loaded, JSB-020)
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
 - Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment), Playwright 1.64 (`@playwright/test`, Chromium, `e2e/`; JSB-017, ADR-021) with playwright-bdd 9 for Gherkin features (JSB-026, ADR-022).

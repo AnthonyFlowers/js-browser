@@ -1,8 +1,5 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { useRef } from "react";
-import { format } from "prettier/standalone";
-import * as babel from "prettier/plugins/babel";
-import * as estree from "prettier/plugins/estree";
 import { EDITOR_THEME } from "../monaco-setup";
 import "./code-editor.css";
 
@@ -27,6 +24,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
     if (!editor) {
       return;
     }
+    const [{ format }, babel, estree] = await Promise.all([
+      import("prettier/standalone"),
+      import("prettier/plugins/babel"),
+      import("prettier/plugins/estree"),
+    ]);
     const formatted = await format(editor.getValue(), {
       parser: "babel",
       plugins: [babel, estree],

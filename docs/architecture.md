@@ -21,7 +21,7 @@ graph TD
   CellList --> CellListItem
   CellListItem --> ActionBar --> ActionButto["ActionButto (sic)"]
   CellListItem --> CodeCell
-  CellListItem --> TextEditor["TextEditor (MDEditor)"]
+  CellListItem --> TextEditor["TextEditor (lazy; MDEditor)"]
   CodeCell --> Resizable
   Resizable --> CodeEditor["CodeEditor (lazy; Monaco + Format button)"]
   CodeCell --> Preview["Preview (sandboxed iframe)"]
@@ -136,12 +136,17 @@ resolve (unpkg redirects to concrete versions/files).
 ## Editor (Monaco)
 
 `src/monaco-setup.ts` (imported by `code-editor.tsx`, which `code-cell.tsx` loads with `React.lazy`, keeping Monaco out of
-the main chunk) bundles `monaco-editor` locally and calls `loader.config({ monaco })`, so nothing loads from a CDN (ADR-011).
+the entry chunk) imports `monaco-editor/editor/editor.api` plus an explicit list of contribution modules, the `javascript`
+language definition and the TypeScript feature register module, instead of `editor.main` (ADR-024), and calls
+`loader.config({ monaco })`, so nothing loads from a CDN (ADR-011). To restore a dropped feature, import its module there.
 Workers come from Vite `?worker` imports (`monaco-editor/editor/editor.worker`, `monaco-editor/language/typescript/ts.worker`)
 registered on `self.MonacoEnvironment.getWorker`; the JS/TS worker serves `javascript`, everything else uses the editor worker.
 JSX highlighting and the `dark-plus` theme come from Shiki via `@shikijs/monaco` (ADR-013). `CodeEditor` uses `onMount`;
-the Format button runs async `prettier/standalone` with the babel and estree plugins. The markdown cell uses
-`@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`.
+the Format button dynamically imports `prettier/standalone` with the babel and estree plugins on first click.
+The markdown cell (`TextEditor`, loaded with `React.lazy` from `cell-list-item.tsx`, empty card as fallback) uses
+`@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`; its chunk (md-editor, refractor, micromark) is
+only fetched when the book has a text cell. `streamsaver` is imported on the first desktop Save Book. The esbuild wasm is not
+preloaded; it is fetched by the first bundle. Sizes and the per-dependency review are in `docs/done/JSB-020-reduce-bundle-size.md`.
 
 ## Persistence
 

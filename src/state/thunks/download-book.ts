@@ -1,4 +1,3 @@
-import * as fs from "streamsaver";
 import { isTouchDevice } from "../../platform";
 
 const downloadWithAnchor = (filename: string, contents: string) => {
@@ -24,7 +23,8 @@ export const downloadBook = async (filename: string, contents: string) => {
     return;
   }
   try {
-    const fileStream = fs.createWriteStream(filename);
+    const { createWriteStream } = await import("streamsaver");
+    const fileStream = createWriteStream(filename);
     await new Response(contents).body?.pipeTo(fileStream);
   } catch {
     downloadWithAnchor(filename, contents);

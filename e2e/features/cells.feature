@@ -54,3 +54,12 @@ Feature: Code and text cells
     When I delete cell 2
     Then the book has 2 cells
     And the preview of cell 2 shows "B"
+
+  Scenario: Format rewrites the code with Prettier
+    When I add a code cell
+    And I enter the code:
+      """
+      const   greeting  =  "hi"
+      """
+    And I click Format in cell 1
+    Then the editor of cell 1 contains "const greeting = 'hi';"
