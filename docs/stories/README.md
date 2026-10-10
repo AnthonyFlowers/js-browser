@@ -8,7 +8,7 @@ directory; completed ones are moved to `../done/`. See `../README.md` for the li
 ```markdown
 # JSB-NNN: Title
 
-- **Status:** Todo | In Progress | Blocked | Done
+- **Status:** Todo | In Progress | Blocked | Deferred | Done
 - **Type:** Story | Task | Bug | Chore
 - **Priority:** High | Medium | Low
 - **Depends on:** JSB-NNN, ... (or none)
@@ -36,10 +36,10 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-002 | Migrate build from CRA 4 to Vite | Done | [done/JSB-002](../done/JSB-002-migrate-cra-to-vite.md) |
 | JSB-003 | Upgrade esbuild-wasm and rewrite bundler | Done | [done/JSB-003](../done/JSB-003-upgrade-esbuild-wasm-rewrite-bundler.md) |
 | JSB-004 | Upgrade editor and UI dependencies | Done | [done/JSB-004](../done/JSB-004-upgrade-editor-and-ui-dependencies.md) |
-| JSB-005 | GitHub Actions deployment to GitHub Pages | Blocked | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
+| JSB-005 | GitHub Actions deployment to GitHub Pages | In Progress | [JSB-005](JSB-005-github-actions-pages-deploy.md) |
 | JSB-006 | Add ESLint, Prettier, and Vitest with CI checks | Done | [done/JSB-006](../done/JSB-006-eslint-prettier-vitest-ci.md) |
 | JSB-007 | Remove stale files and code; refresh README | Done | [done/JSB-007](../done/JSB-007-remove-stale-code-refresh-readme.md) |
-| JSB-008 | Delete obsolete `local-serve` remote branch | Todo | [JSB-008](JSB-008-delete-local-serve-branch.md) |
+| JSB-008 | Delete obsolete `local-serve` remote branch | Deferred | [JSB-008](JSB-008-delete-local-serve-branch.md) |
 | JSB-009 | Add MIT LICENSE | Done | [done/JSB-009](../done/JSB-009-add-mit-license.md) |
 | JSB-010 | Switch between named local books | Todo | [JSB-010](JSB-010-switch-named-local-books.md) |
 | JSB-011 | Save an individual cell as a file | Todo | [JSB-011](JSB-011-save-cell-as-file.md) |

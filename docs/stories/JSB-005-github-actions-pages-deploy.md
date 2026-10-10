@@ -1,6 +1,6 @@
 # JSB-005: GitHub Actions deployment to GitHub Pages
 
-- **Status:** Blocked
+- **Status:** In Progress
 - **Type:** Task
 - **Priority:** High
 - **Depends on:** JSB-002
@@ -23,6 +23,11 @@ As the owner, I want pushes to main to deploy automatically to GitHub Pages via 
 ## Notes
 
 Decision: ADR-002. Order matters: do not delete `gh-pages` until the Actions deployment is confirmed live. May be set to Blocked while waiting for the owner to change the Pages source.
+
+### Status (2026-10-10)
+
+- First deploy (run 38006406840, release PR #2) ran green; owner confirmed the live page loads with assets under `/js-browser/`. Code-cell preview on the live site still to be confirmed (JSX previews depend on the `createRoot` fix in release PR #4).
+- `gh-pages` branch deletion deferred by the owner. The session's GitHub access cannot delete branches; the owner will run `git push origin --delete gh-pages` when ready.
 
 ### Status (2026-10-09)
 
