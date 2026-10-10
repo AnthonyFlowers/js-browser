@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch } from "../hooks/use-app-dispatch";
 import { importCells } from "../state";
+import { isTouchDevice } from "../platform";
 import "./book-importer.css";
 
 const BookImporter = () => {
@@ -8,9 +9,10 @@ const BookImporter = () => {
   const dispatch = useAppDispatch();
   const handleFileChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     let nextFileName = "none";
-    if (evt.target.files) {
-      nextFileName = evt.target.files[0].name;
-      fileReader.readAsText(evt.target.files[0]);
+    const file = evt.target.files?.[0];
+    if (file) {
+      nextFileName = file.name;
+      fileReader.readAsText(file);
     }
     setFileName(nextFileName);
   };
@@ -29,7 +31,7 @@ const BookImporter = () => {
         className="file-input"
         onChange={handleFileChange}
         type="file"
-        accept=".book"
+        accept={isTouchDevice() ? undefined : ".book"}
         name="resume"
       />
       <span className="file-cta">

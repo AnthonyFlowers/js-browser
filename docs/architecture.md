@@ -21,13 +21,19 @@ graph TD
   CellList --> CellListItem
   CellListItem --> ActionBar --> ActionButto["ActionButto (sic)"]
   CellListItem --> CodeCell
-  CellListItem --> TextEditor["TextEditor (MDEditor)"]
+  CellListItem --> TextEditor["TextEditor (lazy; MDEditor)"]
   CodeCell --> Resizable
   Resizable --> CodeEditor["CodeEditor (lazy; Monaco + Format button)"]
   CodeCell --> Preview["Preview (sandboxed iframe)"]
 ```
 
 - `TopMenu`: book title input (currently `disabled`), "Save Book" (`exportCells`), "Load Book" toggle for `BookImporter`.
+- Mobile layout (JSB-019): below 768 px (`NARROW_QUERY` in `hooks/use-media-query.ts`, mirrored by `max-width: 767px` in the CSS)
+  `CodeCell` renders the editor in a vertical `Resizable` (min height 120 px) with a full-width preview below, instead of the
+  side-by-side flex row with the horizontal handle; `TextEditor` edits without the live split. Touch devices
+  (`pointer: coarse` / `hover: none`) get 44 px targets for `ActionBar`, `AddCell`, `TopMenu` and the Format button, always-visible
+  AddCell/Format controls, a 44 px invisible hit area on resize handles (`touch-action: none`), and Monaco's iPad "show keyboard"
+  widget is hidden. `TextEditor` also leaves edit mode on a touch `pointerup` outside (iOS does not fire `click` there).
 - `CellList`: calls `fetchCells("default")` on mount; renders `AddCell` before and after every cell.
 - `CodeCell`: owns the bundling effect; shows a progress bar while `bundle` is missing/loading, else `Preview`.
 - `TextEditor`: click to edit markdown; a capture-phase document click listener leaves edit mode on outside click.
@@ -78,8 +84,8 @@ sequenceDiagram
   CC->>B: bundle(cumulativeCode)
   B-->>S: fulfilled {code, err}
   S-->>P: Preview props (code, err)
-  P->>P: set srcdoc, wait 200ms
-  P->>P: postMessage(code) -> eval in iframe
+  P->>P: new iframe (key=code) loads srcdoc shell
+  P->>P: on load: postMessage(code) -> eval in iframe
 ```
 
 1. `useCumulativeCode(cellId)` walks `order`, and for every code cell up to and including `cellId` appends
@@ -87,10 +93,11 @@ sequenceDiagram
    JSX into `#root`, or JSON/HTML) or `var show = () => {};` for earlier cells, followed by
    the cell content. Text cells are skipped. Result: each cell sees all earlier code; only its own `show` draws.
 2. `CodeCell` effect dispatches `createBundle({ cellId, input: cumulativeCode })`.
-3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors are caught and
-   returned as `err` text.
-4. `Preview` writes a fixed HTML shell into `iframe.srcdoc` (`sandbox="allow-scripts"`), then after 200 ms posts
-   the bundle to it; the shell `eval`s messages and renders runtime errors in red.
+3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors (including network
+   failures and the 120 s deadline) are caught and returned as `err` text. `bundlesSlice` stores the thunk
+   `requestId` per cell and ignores a result from a superseded request.
+4. `Preview` renders an iframe keyed by the bundle code (`sandbox="allow-scripts"`, fixed HTML shell in `srcDoc`) and
+   posts the bundle to it from the iframe `load` event (no timer, so a slow load cannot drop it); the shell `eval`s messages and renders runtime errors in red.
 
 ## Bundler plugin pipeline
 
@@ -113,6 +120,14 @@ graph LR
   JS --> LF
 ```
 
+Reliability limits (JSB-018, ADR-019): every package request has a 30 s timeout and 3 attempts (500 ms, 1000 ms
+backoff) for network errors, timeouts, 5xx and 429, but not 404; the final error reads
+`Failed to fetch <url>: <reason>`. `bundle()` races the build against a 120 s deadline (`BUNDLE_DEADLINE_MS`) that also
+aborts in-flight requests through an `AbortSignal` passed to `fetchPlugin`, so `bundles[cellId].loading` always returns to
+false. Waiting for `esbuild.initialize` times out after 60 s (`INIT_TIMEOUT_MS`); a later bundle re-awaits the same
+pending promise because esbuild refuses a second `initialize` while one is pending. IndexedDB cache calls are best effort
+(3 s, failure counts as a miss).
+
 Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (`/\.css$/`) -> everything
 else. Cache keys are prefixed with a version (`v3:`); on first use per page load, entries without the current
 prefix are removed. Root-absolute imports (`/x`) resolve to `https://unpkg.com/x`. `resolveDir` for fetched files is derived from `request.responseURL` so relative imports inside packages
@@ -121,12 +136,18 @@ resolve (unpkg redirects to concrete versions/files).
 ## Editor (Monaco)
 
 `src/monaco-setup.ts` (imported by `code-editor.tsx`, which `code-cell.tsx` loads with `React.lazy`, keeping Monaco out of
-the main chunk) bundles `monaco-editor` locally and calls `loader.config({ monaco })`, so nothing loads from a CDN (ADR-011).
+the entry chunk) imports `monaco-editor/editor/editor.api` plus an explicit list of contribution modules, the `javascript`
+language definition and the TypeScript feature register module, instead of `editor.main` (ADR-024), and calls
+`loader.config({ monaco })`, so nothing loads from a CDN (ADR-011). To restore a dropped feature, import its module there.
 Workers come from Vite `?worker` imports (`monaco-editor/editor/editor.worker`, `monaco-editor/language/typescript/ts.worker`)
 registered on `self.MonacoEnvironment.getWorker`; the JS/TS worker serves `javascript`, everything else uses the editor worker.
 JSX highlighting and the `dark-plus` theme come from Shiki via `@shikijs/monaco` (ADR-013). `CodeEditor` uses `onMount`;
-the Format button runs async `prettier/standalone` with the babel and estree plugins. The markdown cell uses
-`@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`.
+each lazy editor (`TextEditor`, `CodeEditor`) sits inside an `ErrorBoundary` (message plus Reload button), and `src/index.tsx` reloads once on `vite:preloadError`
+(guarded by a `sessionStorage` flag) so a stale tab after a deploy recovers. The Format button dynamically imports `prettier/standalone` with the babel and estree plugins on first click.
+The markdown cell (`TextEditor`, loaded with `React.lazy` from `cell-list-item.tsx`, empty card as fallback) uses
+`@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`; its chunk (md-editor, refractor, micromark) is
+only fetched when the book has a text cell. `streamsaver` is imported on the first desktop Save Book. The esbuild wasm is not
+preloaded; it is fetched by the first bundle. Sizes and the per-dependency review are in `docs/done/JSB-020-reduce-bundle-size.md`.
 
 ## Persistence
 
@@ -136,8 +157,8 @@ the Format button runs async `prettier/standalone` with the babel and estree plu
 - Load: `fetchCells(title)` reads that key (empty "default" book if missing). Called once from `CellList` with `"default"`.
 - Package cache: localforage instance `filecache`, key = resolved unpkg URL, value = esbuild `OnLoadResult`.
   No invalidation.
-- Book export: `exportCells` JSON-stringifies the `cells` slice and streams it with `streamsaver` to
-  `<title>.book`.
+- Book export: `exportCells` JSON-stringifies the `cells` slice and passes it to `downloadBook` (`thunks/download-book.ts`,
+  ADR-023): `streamsaver` on desktop, a Blob plus temporary `<a download>` on touch devices or without a service worker.
 - Book import: `BookImporter` reads a `.book` file as text, `importCells` parses JSON and requires `data`, `order`,
   `title`; fulfils with the book (replaces order/data/title; saved to cache only once edited, via middleware).
 - `getCachedBooks()` (lists `cellcache` keys) exists but is not used by any component.
@@ -154,8 +175,24 @@ checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run b
 `deploy-pages`. Permissions are `contents: read`, `pages: write`, `id-token: write`; concurrency group `pages`
 (no cancel). The repo's Pages source must be set to "GitHub Actions". Site: https://anthonyflowers.github.io/js-browser/.
 
-`.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: `npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`.
+`.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: job `check` (`npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`) and job `e2e` (needs `check`, see below).
 Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.test.ts` beside their sources.
+
+## End-to-end tests (JSB-017, JSB-026, ADR-021, ADR-022)
+
+`playwright.config.ts` runs Chromium (projects `chromium` for everything except `@mobile` features, and `mobile`, the iPhone 13 device profile in Chromium, for `e2e/features/mobile.feature`; touch drags use CDP `Input.dispatchTouchEvent` in `e2e/app.ts`) against the production build: its `webServer` runs `npm run build` (skipped with
+`E2E_SKIP_BUILD`) then `vite preview` on port 4173 (base `/js-browser/`). Tests are Gherkin scenarios in `e2e/features/*.feature` with steps in `e2e/steps/` (`playwright-bdd`; `npm run test:e2e`
+runs `bddgen`, which generates Playwright specs into the gitignored `.features-gen/`, then `playwright test`). Each test gets a
+fresh browser context, so IndexedDB (cells and the file cache) starts empty. `e2e/mock-unpkg.ts` fulfills every
+`https://unpkg.com/**` request from `e2e/fixtures/unpkg/<name>@<version>/` (stub `react`, `react-dom/client`,
+`tiny-helper`, `tiny-styles`); unknown packages answer 404. Playwright cannot route the hop after a fulfilled 302, so an
+unversioned request is answered directly with an `x-final-url` header and an init script makes
+`XMLHttpRequest.responseURL` report it (the fetch plugin derives `resolveDir` from `responseURL`). Options: `stall`
+(never answer), `slow`/`delayMs`, and `requestTimeoutMs` (caps the XHR `timeout` the app sets, so the 30 s x 3 attempts
+path ends in seconds). `e2e/app.ts` holds the page helpers; the preview is reached with `frameLocator`. The `e2e/` folder
+has its own `tsconfig.json` (Node types), checked by `npm run typecheck`. In CI the `e2e` job (needs `check`) installs
+Chromium with `npx playwright install --with-deps chromium`, runs `npm run test:e2e` and uploads `playwright-report/`
+on failure.
 
 ## Target architecture (refresh)
 

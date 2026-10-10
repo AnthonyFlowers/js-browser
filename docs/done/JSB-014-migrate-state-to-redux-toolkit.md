@@ -1,6 +1,5 @@
 # JSB-014: Migrate state to Redux Toolkit
 
-- **Status:** Done
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-004, JSB-006

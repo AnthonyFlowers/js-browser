@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import "./preview.css";
 
 interface PreviewProps {
@@ -39,22 +39,16 @@ const html = `
 `;
 
 const Preview: React.FC<PreviewProps> = ({ code, bundlingStatus }) => {
-  const iframe = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    iframe.current!.srcdoc = html;
-    setTimeout(() => {
-      iframe.current?.contentWindow?.postMessage(code, "*");
-    }, 200);
-  }, [code]);
-
   return (
     <div className="preview-wrapper">
       <iframe
+        key={code}
         title="code-executor"
-        ref={iframe}
         sandbox="allow-scripts"
         srcDoc={html}
+        onLoad={(event) =>
+          event.currentTarget.contentWindow?.postMessage(code, "*")
+        }
       />
       {bundlingStatus ? (
         <div className="preview-error">{bundlingStatus}</div>

@@ -1,6 +1,5 @@
 # JSB-003: Upgrade esbuild-wasm and rewrite bundler
 
-- **Status:** Done
 - **Type:** Story
 - **Priority:** High
 - **Depends on:** JSB-002

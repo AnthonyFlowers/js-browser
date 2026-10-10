@@ -95,3 +95,10 @@
 .text-editor .wmde-markdown ul {
   list-style: disc;
 }
+
+@media (max-width: 767px) {
+  /* The action bar overlays the top right corner; keep the text clear of it. */
+  .text-editor.card .card-content {
+    padding: 52px 12px 12px;
+  }
+}

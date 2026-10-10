@@ -9,3 +9,36 @@
 .top-menu > * {
   margin-inline: 10px;
 }
+
+@media (max-width: 767px) {
+  .top-menu {
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .top-menu > * {
+    margin-inline: 0;
+  }
+
+  .top-menu h1 {
+    flex: 0 0 auto;
+  }
+
+  .top-menu .control {
+    flex: 1 1 140px;
+    min-width: 0;
+  }
+
+  .top-menu .file-label {
+    flex: 1 1 100%;
+  }
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .top-menu .button,
+  .top-menu .file-cta {
+    min-height: 44px;
+    padding-inline: 1.25em;
+  }
+}

@@ -5,6 +5,8 @@
 
 An in-browser JavaScript/JSX notebook. Write code and markdown cells, bundle the code in the browser, and see the result next to each cell. No backend required.
 
+A personal tool for quickly trying JS and npm packages, built to work well on desktop and mobile.
+
 **Live demo:** https://anthonyflowers.github.io/js-browser/
 
 ## Features
@@ -61,24 +63,27 @@ Then open http://localhost:5173/js-browser/.
 | `npm run format:check` | Check formatting (used in CI)         |
 | `npm run typecheck`    | Type-check with `tsc --noEmit`        |
 | `npm test`             | Run the Vitest test suite             |
+| `npm run test:e2e`     | Run the Gherkin end-to-end tests      |
 
 ## Tech stack
 
-React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and Vitest, with ESLint and Prettier for code quality.
+React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, Vitest and Playwright (end-to-end), with ESLint and Prettier for code quality.
 
 ## Deployment and workflow
 
 GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` changes. CI (lint, format check, typecheck, tests, build) runs on pull requests.
 
-- Work is done on branches that open pull requests into `dev`.
-- Releases are `dev` to `main` pull requests.
-- Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
+- Work is done on story branches that are merged into `dev` once checks pass.
+- Releases are `dev` to `main` pull requests, reviewed before the owner merges.
+- Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions/README.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
 
 ## Roadmap
 
+- Stability sweep first: [E2E tests](docs/done/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/done/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/done/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
 - [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
 - [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
 - [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)
+- Later: share a book by URL (JSB-021), TypeScript cells (JSB-022), console output (JSB-023), offline/PWA (JSB-024)
 
 ## License
 

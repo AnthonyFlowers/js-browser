@@ -1,6 +1,5 @@
 # JSB-004: Upgrade editor and UI dependencies
 
-- **Status:** Done
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-002

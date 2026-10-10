@@ -1,9 +1,9 @@
 # JSB-005: GitHub Actions deployment to GitHub Pages
 
-- **Status:** In Progress
 - **Type:** Task
 - **Priority:** High
 - **Depends on:** JSB-002
+- **State:** In Progress, waiting on the owner to delete `gh-pages` after the live check
 
 ## Description
 
