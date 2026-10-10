@@ -1,6 +1,6 @@
 # JSB-008: Delete obsolete local-serve remote branch
 
-- **Status:** Todo
+- **Status:** Deferred
 - **Type:** Chore
 - **Priority:** Low
 - **Depends on:** none
@@ -19,3 +19,12 @@ As the owner, I want the unused `local-serve` remote branch removed so that the 
 ## Notes
 
 Purpose of the branch is unknown. Not visible in the local clone's remote refs when this story was written (only `main` and the working branch), so fetch first. Do not delete without owner confirmation: Claude shows the owner what is on the branch (commit list and diff vs. `main`) first, and the owner confirms the deletion explicitly (ADR-010). The `dev` branch now exists, so also check whether anything should go there instead.
+
+### Status (2026-10-10)
+
+Deferred by the owner. Investigation: `local-serve` (3 commits, Feb 2023, tip `df23387`) is an earlier variant of the app packaged as `@jsnote-ant/local-client` that saved cells to a `/cells` HTTP server (not in the repo); `main` supersedes it. Owner chose tag-then-delete. The session cannot push tags or delete branches, so the owner will run:
+
+```sh
+git push origin df23387450fd210c90878b403b04d4d37ee8c7b0:refs/tags/archive/local-serve
+git push origin --delete local-serve
+```

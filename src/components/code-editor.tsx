@@ -1,11 +1,10 @@
-import MonacoEditor, { EditorDidMount } from "@monaco-editor/react";
+import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { useRef } from "react";
-import prettier from "prettier";
-import parser from "prettier/parser-babel";
+import { format } from "prettier/standalone";
+import * as babel from "prettier/plugins/babel";
+import * as estree from "prettier/plugins/estree";
+import { EDITOR_THEME } from "../monaco-setup";
 import "./code-editor.css";
-import "./syntax.css";
-import codeShift from "jscodeshift";
-import Highlighter from "monaco-jsx-highlighter";
 
 interface CodeEditorProps {
   initialValue: string;
@@ -13,41 +12,29 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const editorRef = useRef<any>();
-  const onEditorDidMount: EditorDidMount = (getValue, monacoEditor) => {
-    editorRef.current = monacoEditor;
-    monacoEditor.onDidChangeModelContent(() => {
-      onChange(getValue());
-    });
-    monacoEditor.getModel()?.updateOptions({ tabSize: 2 });
-    const highlighter = new Highlighter(
-      // @ts-expect-error window.monaco is injected by the 3.x loader (JSB-004)
-      window.monaco,
-      codeShift,
-      monacoEditor
-    );
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
 
-    highlighter.highLightOnDidChangeModelContent(
-      () => {},
-      () => {},
-      undefined,
-      () => {}
-    );
+  const onEditorMount: OnMount = (editor) => {
+    editorRef.current = editor;
+    editor.onDidChangeModelContent(() => {
+      onChange(editor.getValue());
+    });
+    editor.getModel()?.updateOptions({ tabSize: 2 });
   };
 
-  function onFormatClick() {
-    const unformatted = editorRef.current.getModel().getValue();
-    const formatted = prettier
-      .format(unformatted, {
-        parser: "babel",
-        plugins: [parser],
-        useTabs: false,
-        semi: true,
-        singleQuote: true,
-      })
-      .replace(/\n$/, "");
-    editorRef.current.setValue(formatted);
+  async function onFormatClick() {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+    const formatted = await format(editor.getValue(), {
+      parser: "babel",
+      plugins: [babel, estree],
+      useTabs: false,
+      semi: true,
+      singleQuote: true,
+    });
+    editor.setValue(formatted.replace(/\n$/, ""));
   }
 
   return (
@@ -59,11 +46,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         Format
       </button>
       <MonacoEditor
-        editorDidMount={onEditorDidMount}
+        onMount={onEditorMount}
         value={initialValue}
         height="100%"
         language="javascript"
-        theme="dark"
+        theme={EDITOR_THEME}
         options={{
           wordWrap: "on",
           minimap: { enabled: false },

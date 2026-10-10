@@ -1,29 +1,30 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { useActions } from "../hooks/use-actions";
-import { useTypedSelector } from "../hooks/use-typed-selector";
+import { useAppDispatch } from "../hooks/use-app-dispatch";
+import { useAppSelector } from "../hooks/use-app-selector";
+import { exportCells, updateTitle } from "../state";
 import BookImporter from "./book-importer";
 import "./top-menu.css";
 
 export const TopMenu = () => {
-  const { updateTitle, exportCells } = useActions();
-  const initialTitle = useTypedSelector(({ cells: { title } }) => {
+  const dispatch = useAppDispatch();
+  const initialTitle = useAppSelector(({ cells: { title } }) => {
     return title;
   });
   const [title, setTitle] = useState<string>(initialTitle);
   const [isImporting, setIsImporting] = useState<boolean>(false);
 
   const handleExport = () => {
-    exportCells();
+    dispatch(exportCells());
   };
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      updateTitle(title);
+      dispatch(updateTitle(title));
     }, 1000);
     return () => {
       clearTimeout(timer);
     };
-  }, [title, updateTitle]);
+  }, [title, dispatch]);
 
   const handleTitleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setTitle(evt.target.value);

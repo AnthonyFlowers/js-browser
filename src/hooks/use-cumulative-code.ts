@@ -1,18 +1,18 @@
-import { useTypedSelector } from "./use-typed-selector";
+import { useAppSelector } from "./use-app-selector";
 
 export const useCumulativeCode = (cellId: string) => {
-  return useTypedSelector((state) => {
+  return useAppSelector((state) => {
     const { data, order } = state.cells;
     const orderedCells = order.map((id) => data[id]);
 
     const showFunc = `
         import _React from "react";
-        import _ReactDOM from "react-dom";
+        import { createRoot as _createRoot } from "react-dom/client";
         var show = (value) => {
           const root = document.querySelector("#root");
           if (typeof value === "object") {
             if (value.$$typeof && value.props) {
-              _ReactDOM.render(value, root);
+              _createRoot(root).render(value);
             } else {
               root.innerHTML = JSON.stringify(value);                
             }
@@ -36,6 +36,6 @@ export const useCumulativeCode = (cellId: string) => {
         break;
       }
     }
-    return cumulativeCode;
-  }).join("\n");
+    return cumulativeCode.join("\n");
+  });
 };

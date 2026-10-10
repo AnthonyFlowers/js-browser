@@ -37,9 +37,9 @@ const setupPlugin = () => {
 };
 
 describe("unpkgPathPlugin", () => {
-  it("has a name and registers three onResolve handlers", () => {
+  it("has a name and registers four onResolve handlers", () => {
     expect(unpkgPathPlugin().name).toBe("unpkg-path-plugin");
-    expect(setupPlugin().registered).toHaveLength(3);
+    expect(setupPlugin().registered).toHaveLength(4);
   });
 
   it("resolves the virtual root entry index.js", () => {
@@ -60,6 +60,14 @@ describe("unpkgPathPlugin", () => {
     expect(resolve("@scope/pkg")).toEqual({
       namespace: "a",
       path: "https://unpkg.com/@scope/pkg",
+    });
+  });
+
+  it("resolves root-absolute imports to unpkg paths", () => {
+    const { resolve } = setupPlugin();
+    expect(resolve("/npm/x/index.js", "/pkg@1.0.0")).toEqual({
+      namespace: "a",
+      path: "https://unpkg.com/npm/x/index.js",
     });
   });
 

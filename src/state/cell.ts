@@ -5,3 +5,9 @@ export interface Cell {
   type: CellTypes;
   content: string;
 }
+
+export interface Book {
+  order: string[];
+  data: { [key: string]: Cell };
+  title: string;
+}

@@ -7,6 +7,10 @@ const axiosGet = vi.hoisted(() => vi.fn());
 vi.mock("localforage", () => ({
   default: {
     createInstance: () => ({
+      keys: async () => [...store.keys()],
+      removeItem: async (key: string) => {
+        store.delete(key);
+      },
       getItem: async (key: string) => store.get(key) ?? null,
       setItem: async (key: string, value: unknown) => {
         store.set(key, value);
@@ -17,7 +21,7 @@ vi.mock("localforage", () => ({
 }));
 vi.mock("axios", () => ({ default: { get: axiosGet } }));
 
-import { fetchPlugin } from "./fetch-plugin";
+import { fetchPlugin as fetchPluginStatic } from "./fetch-plugin";
 
 type LoadHandler = (
   args: esbuild.OnLoadArgs
@@ -28,7 +32,10 @@ type LoadHandler = (
   | undefined
   | void;
 
-const setupPlugin = (code: string) => {
+const setupPlugin = (
+  code: string,
+  fetchPlugin: typeof fetchPluginStatic = fetchPluginStatic
+) => {
   const registered: { filter: RegExp; handler: LoadHandler }[] = [];
   const fakeBuild = {
     onLoad: (options: { filter: RegExp }, handler: LoadHandler) => {
@@ -77,12 +84,12 @@ describe("fetchPlugin", () => {
       resolveDir: "/pkg@1.0.0/lib/",
     });
     expect(axiosGet).toHaveBeenCalledTimes(1);
-    expect(store.get("v2:https://unpkg.com/pkg")).toEqual(result);
+    expect(store.get("v3:https://unpkg.com/pkg")).toEqual(result);
   });
 
   it("serves a cache hit without fetching", async () => {
     const cached = { loader: "jsx", contents: "cached", resolveDir: "/x/" };
-    store.set("v2:https://unpkg.com/pkg", cached);
+    store.set("v3:https://unpkg.com/pkg", cached);
     const { load } = setupPlugin("");
     expect(await load("https://unpkg.com/pkg")).toEqual(cached);
     expect(axiosGet).not.toHaveBeenCalled();
@@ -100,5 +107,36 @@ describe("fetchPlugin", () => {
     expect(result?.contents).toContain("document.createElement");
     expect(result?.contents).toContain(JSON.stringify(css));
     expect(result?.resolveDir).toBe("/pkg@1.0.0/dist/");
+  });
+
+  it("loads .json files with the json loader as raw text", async () => {
+    axiosGet.mockResolvedValue({
+      data: '{"name":"pkg"}',
+      request: { responseURL: "https://unpkg.com/pkg@1.0.0/package.json" },
+    });
+    const { load } = setupPlugin("");
+    const result = await load("https://unpkg.com/pkg/package.json");
+    expect(result).toEqual({
+      loader: "json",
+      contents: '{"name":"pkg"}',
+      resolveDir: "/pkg@1.0.0/",
+    });
+    expect(axiosGet).toHaveBeenCalledWith(
+      "https://unpkg.com/pkg/package.json",
+      {
+        responseType: "text",
+      }
+    );
+  });
+
+  it("removes cache entries from older versions once", async () => {
+    vi.resetModules();
+    const { fetchPlugin } = await import("./fetch-plugin");
+    store.set("https://unpkg.com/old", { loader: "jsx", contents: "a" });
+    store.set("v2:https://unpkg.com/old2", { loader: "jsx", contents: "b" });
+    store.set("v3:https://unpkg.com/keep", { loader: "jsx", contents: "c" });
+    const { load } = setupPlugin("", fetchPlugin);
+    await load("https://unpkg.com/keep");
+    expect([...store.keys()]).toEqual(["v3:https://unpkg.com/keep"]);
   });
 });

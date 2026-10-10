@@ -1,34 +1,85 @@
 # js-browser
 
-A react app that bundles JavaScript code and runs it within the browser. Valid imports from the npm repository are downloaded and included in execution of the code.
-Includes markup text areas for code commenting and documentation
+[![CI](https://github.com/AnthonyFlowers/js-browser/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/AnthonyFlowers/js-browser/actions/workflows/ci.yml)
+[![Deploy](https://github.com/AnthonyFlowers/js-browser/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/AnthonyFlowers/js-browser/actions/workflows/deploy.yml)
 
-Deployed at: [js-browser](https://anthonyflowers.github.io/js-browser/)
+An in-browser JavaScript/JSX notebook. Write code and markdown cells, bundle the code in the browser, and see the result next to each cell. No backend required.
+
+**Live demo:** https://anthonyflowers.github.io/js-browser/
 
 ## Features
 
-- Write JavaScript using and have it execute on the right side of each cell
-- Can import npm packages from the node repository
-- Write comments and documentation using markup cells
-- Work persists using the browsers storage features
-- Using the `show()` command a user can display data, html, and jsx components on the right pane.
+- Code cells with the Monaco editor (syntax highlighting, JSX support, Format button)
+- Markdown cells for notes and documentation
+- In-browser bundling with esbuild-wasm
+- `import` npm packages by name; they are resolved from [unpkg](https://unpkg.com) and cached in IndexedDB
+- CSS imports from packages
+- Cumulative scope: each code cell sees the code of the cells above it
+- Sandboxed preview: each cell runs in its own `sandbox="allow-scripts"` iframe
+- `show()` helper to display values, HTML or JSX in the cell preview
+- Save a book to a file and load it back with Save Book / Load Book
+- Your book is persisted in the browser between visits
 
-## Project Details
+## Usage
 
-Editor
+Add a code cell and call `show()` to display something in its preview:
 
-- The monaco editor is used enable syntax highlighting while writing the JavaScript code
+```jsx
+import { useState } from "react";
 
-JavaScript Bundling and Execution
+show("<h1>Hello</h1>"); // strings are rendered as HTML
+show({ answer: 42 }); // objects are shown as JSON
 
-- Bundling is handled using esbuild
-- Packages are downloaded from the npm repository using axios. Imported packages are downloaded using url parsing/building to find the files that should be included in the build
-- Packages are cached on the local system using the browsers storage
-- The bundled code is executed in iframes to separate the execution of code from the app
+const Counter = () => {
+  const [n, setN] = useState(0);
+  return <button onClick={() => setN(n + 1)}>Clicked {n} times</button>;
+};
 
-## Future Features
+show(<Counter />); // JSX is rendered with React
+```
 
-- [ ] There is a save button that saves a book. An option to load from a book file should be added
-- [ ] Add feature to switch between differently named local books
-- [ ] Add save feature for each markup/code cell. Would save a cell as a js/jsx/md file
-- [ ] Add cell for css styling
+Later cells can use anything declared in earlier cells. Any package on npm can be imported, for example `import axios from "axios";`.
+
+## Getting started
+
+Requires Node 24 (see `.nvmrc`) and npm.
+
+```
+npm ci
+npm run dev
+```
+
+Then open http://localhost:5173/js-browser/.
+
+| Script                 | Description                           |
+| ---------------------- | ------------------------------------- |
+| `npm run dev`          | Start the Vite dev server             |
+| `npm run build`        | Production build into `dist/`         |
+| `npm run preview`      | Serve the production build locally    |
+| `npm run lint`         | Run ESLint                            |
+| `npm run format`       | Format the code with Prettier         |
+| `npm run format:check` | Check formatting (used in CI)         |
+| `npm run typecheck`    | Type-check with `tsc --noEmit`        |
+| `npm test`             | Run the Vitest test suite             |
+
+## Tech stack
+
+React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and Vitest, with ESLint and Prettier for code quality.
+
+## Deployment and workflow
+
+GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` changes. CI (lint, format check, typecheck, tests, build) runs on pull requests.
+
+- Work is done on branches that open pull requests into `dev`.
+- Releases are `dev` to `main` pull requests.
+- Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
+
+## Roadmap
+
+- [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
+- [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
+- [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)
+
+## License
+
+[MIT](LICENSE)

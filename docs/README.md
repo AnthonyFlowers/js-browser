@@ -21,8 +21,8 @@
 
 ## Branching and release
 
-Story work happens on a branch that opens a PR into `dev` and is merged once CI is green. Releases are `dev` -> `main`
-PRs, opened by Claude and merged by the owner; a merge to `main` deploys to GitHub Pages. Never push directly to `main`
-or `dev`. Branch deletions need owner confirmation (ADR-010).
+Story work happens on a branch and is merged directly into `dev` once all local checks pass (no PR; CI runs on every
+push to `dev`). Releases are `dev` -> `main` PRs, opened by Claude and merged by the owner; a merge to `main` deploys to
+GitHub Pages. Never push directly to `main` (ADR-017). Branch deletions need owner confirmation (ADR-010).
 
 IDs are never reused. Story files are never deleted.

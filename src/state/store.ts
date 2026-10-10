@@ -1,10 +1,11 @@
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { configureStore } from "@reduxjs/toolkit";
 import reducers from "./reducers";
-import { persistMiddleware } from "./middlewares/persist-middleware";
+import { persistListener } from "./persist-listener";
 
-export const store = createStore(
-  reducers,
-  {},
-  applyMiddleware(persistMiddleware, thunk)
-);
+export const store = configureStore({
+  reducer: reducers,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(persistListener.middleware),
+});
+
+export type AppDispatch = typeof store.dispatch;
