@@ -7,7 +7,7 @@ model: sonnet
 You implement the story you are given, following CLAUDE.md and the story's Acceptance Criteria.
 
 - Node 24 comes from the SessionStart hook; if `node -v` is not 24, prefix commands with `npx -y node@24`.
-- unpkg and jsDelivr are blocked in the sandbox: browser checks use Playwright route interception (and the e2e suite once JSB-017 lands).
+- unpkg and jsDelivr are blocked in the sandbox: browser checks use Playwright route interception (`e2e/mock-unpkg.ts`; run the suite with `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run test:e2e`).
 - Gates: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, `npm run build`.
 - Set the owner identity (`git config user.name "Anthony Flowers"`, `git config user.email "22030883+AnthonyFlowers@users.noreply.github.com"`), commit on the story branch before handing back, and never leave the working tree dirty. Message starts with the story ID; no Claude attribution. Do not touch signing config.
 - Catch up with `dev` by merge; never rebase, stash, amend or force-push.

@@ -63,10 +63,11 @@ Then open http://localhost:5173/js-browser/.
 | `npm run format:check` | Check formatting (used in CI)         |
 | `npm run typecheck`    | Type-check with `tsc --noEmit`        |
 | `npm test`             | Run the Vitest test suite             |
+| `npm run test:e2e`     | Run the Playwright end-to-end tests   |
 
 ## Tech stack
 
-React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and Vitest, with ESLint and Prettier for code quality.
+React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, Vitest and Playwright (end-to-end), with ESLint and Prettier for code quality.
 
 ## Deployment and workflow
 
@@ -78,7 +79,7 @@ GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` 
 
 ## Roadmap
 
-- Stability sweep first: [E2E tests](docs/stories/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/done/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/stories/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
+- Stability sweep first: [E2E tests](docs/done/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/done/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/stories/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
 - [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
 - [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
 - [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)

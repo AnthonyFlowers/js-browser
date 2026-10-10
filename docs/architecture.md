@@ -163,8 +163,23 @@ checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run b
 `deploy-pages`. Permissions are `contents: read`, `pages: write`, `id-token: write`; concurrency group `pages`
 (no cancel). The repo's Pages source must be set to "GitHub Actions". Site: https://anthonyflowers.github.io/js-browser/.
 
-`.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: `npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`.
+`.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: job `check` (`npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`) and job `e2e` (needs `check`, see below).
 Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.test.ts` beside their sources.
+
+## End-to-end tests (JSB-017, ADR-021)
+
+`playwright.config.ts` runs Chromium against the production build: its `webServer` runs `npm run build` (skipped with
+`E2E_SKIP_BUILD`) then `vite preview` on port 4173 (base `/js-browser/`). Specs are `e2e/*.spec.ts`; each test gets a
+fresh browser context, so IndexedDB (cells and the file cache) starts empty. `e2e/mock-unpkg.ts` fulfills every
+`https://unpkg.com/**` request from `e2e/fixtures/unpkg/<name>@<version>/` (stub `react`, `react-dom/client`,
+`tiny-helper`, `tiny-styles`); unknown packages answer 404. Playwright cannot route the hop after a fulfilled 302, so an
+unversioned request is answered directly with an `x-final-url` header and an init script makes
+`XMLHttpRequest.responseURL` report it (the fetch plugin derives `resolveDir` from `responseURL`). Options: `stall`
+(never answer), `slow`/`delayMs`, and `requestTimeoutMs` (caps the XHR `timeout` the app sets, so the 30 s x 3 attempts
+path ends in seconds). `e2e/app.ts` holds the page helpers; the preview is reached with `frameLocator`. The `e2e/` folder
+has its own `tsconfig.json` (Node types), checked by `npm run typecheck`. In CI the `e2e` job (needs `check`) installs
+Chromium with `npx playwright install --with-deps chromium`, runs `npm run test:e2e` and uploads `playwright-report/`
+on failure.
 
 ## Target architecture (refresh)
 

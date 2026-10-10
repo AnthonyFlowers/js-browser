@@ -48,7 +48,7 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-014 | Migrate state to Redux Toolkit | [done/JSB-014](../done/JSB-014-migrate-state-to-redux-toolkit.md) |
 | JSB-015 | Adopt dev branch workflow | [done/JSB-015](../done/JSB-015-adopt-dev-branch-workflow.md) |
 | JSB-016 | Code cell preview sometimes stays on the loading bar (depends on JSB-018) | [JSB-016](JSB-016-preview-stuck-on-loading-bar.md) |
-| JSB-017 | End-to-end tests in CI with Playwright | [JSB-017](JSB-017-e2e-tests-in-ci.md) |
+| JSB-017 | End-to-end tests in CI with Playwright | [done/JSB-017](../done/JSB-017-e2e-tests-in-ci.md) |
 | JSB-018 | Timeouts, retries and clear errors for package fetches | [done/JSB-018](../done/JSB-018-fetch-timeouts-retries-errors.md) |
 | JSB-019 | Mobile layout pass | [JSB-019](JSB-019-mobile-layout-pass.md) |
 | JSB-020 | Reduce bundle size (Monaco and other heavy dependencies) | [JSB-020](JSB-020-reduce-bundle-size.md) |
@@ -58,4 +58,4 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-024 | Offline support and installable PWA | [JSB-024](JSB-024-offline-pwa.md) |
 | JSB-025 | Workflow efficiency for Claude Code sessions | [done/JSB-025](../done/JSB-025-workflow-efficiency-for-claude-sessions.md) |
 
-Priority order: the stability sweep comes first: JSB-017 next, then JSB-019, JSB-020 (JSB-018 done; JSB-016 awaits the live mobile check); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
+Priority order: the stability sweep comes first: JSB-019 next, then JSB-020 (JSB-017 and JSB-018 done; JSB-016 awaits the live mobile check); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.

@@ -26,8 +26,8 @@ Current:
 - Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts`, ADR-011); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
-- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment).
-- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build on PRs to `dev`/`main` and pushes to `dev`.
+- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment), Playwright 1.64 (`@playwright/test`, Chromium, `e2e/`; JSB-017, ADR-021).
+- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build (job `check`), then the Playwright suite (job `e2e`), on PRs to `dev`/`main` and pushes to `dev`.
 
 ## Commands
 
@@ -41,11 +41,15 @@ npm run format          # Prettier --write
 npm run format:check    # Prettier --check (CI)
 npm run typecheck       # tsc --noEmit
 npm test                # Vitest (vitest run)
+npm run test:e2e        # Playwright e2e: builds, serves `vite preview` on :4173, runs Chromium
 ```
 
-CI runs `lint`, `format:check`, `typecheck`, `test` and `build`; run them all before merging into `dev` or opening a PR.
+CI runs `lint`, `format:check`, `typecheck` (app and `e2e/`), `test` and `build`, plus `test:e2e` in a separate job; run them all before merging into `dev` or opening a PR.
 Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsSlice.test.ts` beside `cellsSlice.ts`);
 bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
+E2E tests live in `e2e/*.spec.ts` (Vitest ignores them). `e2e/mock-unpkg.ts` serves unpkg.com from `e2e/fixtures/unpkg/`
+(stub `react`, `react-dom/client`, a helper and a CSS package) with `stall`/`slow` modes and a capped XHR timeout; use it
+for any test that needs packages or a stalled/slow network. `e2e/app.ts` has the page helpers (add cell, set code, preview).
 
 There is no manual deploy command (see Deployment).
 
@@ -67,6 +71,7 @@ eslint.config.js, .prettierrc  lint/format config (tests are `src/**/*.test.ts`,
 .github/workflows/          deploy.yml (Pages), ci.yml (checks)
 .claude/                    settings.json (hooks, permissions), agents/ (subagent definitions)
 scripts/claude/             session-start.sh (SessionStart hook: Node from .nvmrc + npm ci)
+e2e/                        Playwright specs, mock-unpkg.ts, app.ts helpers, fixtures/ (unpkg packages, sample.book)
 docs/                       stories/, done/, architecture.md, decisions/ (one ADR per file)
 ```
 
@@ -127,7 +132,8 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 ## Gotchas
 
 - The container has Node 22; the SessionStart hook puts Node 24 on `PATH` (otherwise `npx -y node@24`).
-- unpkg/jsDelivr are blocked in the sandbox: use Playwright route interception / e2e fixtures for browser checks.
+- unpkg/jsDelivr are blocked in the sandbox: browser checks use `npm run test:e2e` (route-intercepted fixtures) or `mockUnpkg` in a scratch Playwright script.
+- Locally Playwright 1.64 wants a newer Chromium than the preinstalled one: run `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run test:e2e` (never `playwright install` here). CI leaves it unset and installs browsers. `E2E_SKIP_BUILD=1` reuses `dist/`.
 - The stop hook flags unpushed or uncommitted work: push right after each commit. Never follow its reset-author or rebase advice; it would rewrite the owner's identity.
 - The permission classifier blocks history rewrites in Auto mode; merge instead of rebasing.
 
