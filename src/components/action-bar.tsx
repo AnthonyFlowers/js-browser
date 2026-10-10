@@ -1,5 +1,6 @@
 import "./action-bar.css";
-import { useActions } from "../hooks/use-actions";
+import { useAppDispatch } from "../hooks/use-app-dispatch";
+import { deleteCell, moveCell } from "../state";
 import { ActionButton } from "./action-button";
 
 interface ActionBarProps {
@@ -7,13 +8,19 @@ interface ActionBarProps {
 }
 
 const ActionBar: React.FC<ActionBarProps> = ({ id }) => {
-  const { moveCell, deleteCell } = useActions();
+  const dispatch = useAppDispatch();
 
   return (
     <div className="action-bar">
-      <ActionButton action={() => moveCell(id, "up")} icon="fa-arrow-up" />
-      <ActionButton action={() => moveCell(id, "down")} icon="fa-arrow-down" />
-      <ActionButton action={() => deleteCell(id)} icon="fa-times" />
+      <ActionButton
+        action={() => dispatch(moveCell({ id, direction: "up" }))}
+        icon="fa-arrow-up"
+      />
+      <ActionButton
+        action={() => dispatch(moveCell({ id, direction: "down" }))}
+        icon="fa-arrow-down"
+      />
+      <ActionButton action={() => dispatch(deleteCell(id))} icon="fa-times" />
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import "./code-cell.css";
 import { lazy, Suspense, useEffect } from "react";
-import { Cell } from "../state";
+import { Cell, createBundle, updateCell } from "../state";
 import Preview from "./preview";
 import Resizable from "./resizable";
-import { useActions } from "../hooks/use-actions";
-import { useTypedSelector } from "../hooks/use-typed-selector";
+import { useAppDispatch } from "../hooks/use-app-dispatch";
+import { useAppSelector } from "../hooks/use-app-selector";
 import { useCumulativeCode } from "../hooks/use-cumulative-code";
 
 const CodeEditor = lazy(() => import("./code-editor"));
@@ -14,23 +14,23 @@ interface CodeCellProps {
 }
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
-  const { updateCell, createBundle } = useActions();
-  const bundle = useTypedSelector((state) => state.bundles[cell.id]);
+  const dispatch = useAppDispatch();
+  const bundle = useAppSelector((state) => state.bundles[cell.id]);
   const cumulativeCode = useCumulativeCode(cell.id);
 
   useEffect(() => {
     if (!bundle) {
-      createBundle(cell.id, cumulativeCode);
+      dispatch(createBundle({ cellId: cell.id, input: cumulativeCode }));
       return;
     }
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cumulativeCode);
+      dispatch(createBundle({ cellId: cell.id, input: cumulativeCode }));
     }, 1000);
     return () => {
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cell.id, cumulativeCode, createBundle]);
+  }, [cell.id, cumulativeCode, dispatch]);
 
   return (
     <Resizable direction="vertical">
@@ -45,7 +45,9 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
           <Suspense fallback={null}>
             <CodeEditor
               initialValue={cell.content}
-              onChange={(value) => updateCell(cell.id, value)}
+              onChange={(value) =>
+                dispatch(updateCell({ id: cell.id, content: value }))
+              }
             />
           </Suspense>
         </Resizable>

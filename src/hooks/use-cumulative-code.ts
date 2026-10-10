@@ -1,7 +1,7 @@
-import { useTypedSelector } from "./use-typed-selector";
+import { useAppSelector } from "./use-app-selector";
 
 export const useCumulativeCode = (cellId: string) => {
-  return useTypedSelector((state) => {
+  return useAppSelector((state) => {
     const { data, order } = state.cells;
     const orderedCells = order.map((id) => data[id]);
 

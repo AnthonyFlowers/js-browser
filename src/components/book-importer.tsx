@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useActions } from "../hooks/use-actions";
+import { useAppDispatch } from "../hooks/use-app-dispatch";
+import { importCells } from "../state";
 import "./book-importer.css";
 
 const BookImporter = () => {
   const [fileName, setFileName] = useState("none");
-  const { importCells } = useActions();
+  const dispatch = useAppDispatch();
   const handleFileChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     let nextFileName = "none";
     if (evt.target.files) {
@@ -18,7 +19,7 @@ const BookImporter = () => {
   fileReader.onloadend = () => {
     const readFile = fileReader.result;
     if (readFile && typeof readFile === "string") {
-      importCells(readFile);
+      dispatch(importCells(readFile));
     }
   };
 

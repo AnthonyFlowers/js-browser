@@ -1,4 +1,13 @@
 export * from "./store";
-export * from "./reducers";
+export type { RootState } from "./reducers";
 export * from "./cell";
-export * as actionCreators from "./action-creators";
+export {
+  updateCell,
+  deleteCell,
+  moveCell,
+  insertCellAfter,
+  updateTitle,
+} from "./slices/cellsSlice";
+export type { Direction } from "./slices/cellsSlice";
+export * from "./thunks/bundleThunks";
+export * from "./thunks/cellsThunks";
