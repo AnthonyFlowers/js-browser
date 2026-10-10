@@ -27,6 +27,13 @@ Feature: Phone layout and touch
     And the editor of cell 1 is stacked above its preview
     And the preview of cell 1 is as wide as the cell
     And there is no Monaco keyboard overlay in cell 1
+    And the Format button of cell 1 does not cover the editor
+
+  Scenario: Every code cell of a book renders its preview
+    When I load the book file "e2e/fixtures/mobile.book"
+    Then the book has 3 cells
+    And the preview of cell 1 shows "[1,4,9,16]"
+    And the preview of cell 3 shows "second cell"
 
   Scenario: Touch controls are at least 44 px
     When I add a code cell

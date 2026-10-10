@@ -31,11 +31,13 @@ Part of the stability sweep. Likely touches `code-cell.css`, `resizable.css`, `t
 
 - Breakpoint 768 px: stacked layout below it (`CodeCell` picks the tree with `useMediaQuery`; the editor keeps a vertical handle, min 120 px, the preview is 40vh, min 200 px, full width). Desktop tree and behaviour are unchanged.
 - Root cause of the keyboard icons over the code (reproduced in Chromium with the iPhone UA): Monaco's `iPadShowKeyboard` overlay textarea, shown whenever the UA is iOS. Hidden by CSS; tapping the editor opens the keyboard as usual.
+- On narrow screens the Format button sits in its own row above the code instead of overlaying the first line.
 - Hover-only controls were unreachable on touch: the Format button and the AddCell strip are now always visible under `hover: none`.
 - Resize handles keep their 10 px look; a 44 px invisible `::after` hit area and `touch-action: none` make them draggable by finger (react-resizable/react-draggable handle touch events; verified with CDP touch events in the e2e suite).
 - Monaco: `scrollbar.alwaysConsumeMouseWheel: false` added; font 18 px, word wrap and no minimap were already set. Markdown cells use the edit-only mode below 768 px.
 - Save Book: Blob + `<a download>` on touch devices, streamsaver on desktop (ADR-023). Load Book drops the `accept` filter on touch devices.
 - Markdown cell leave-edit: added a touch `pointerup` listener because iOS Safari does not fire `click` for taps on non-interactive elements. The MDEditor height drag bar is mouse-only (not touch); not changed.
+- A blank preview for a cell below the fold in full-page screenshots was a capture artifact (the iframe text is present and a viewport screenshot shows it); the e2e scenario "Every code cell of a book renders its preview" guards it.
 - E2E: `mobile` Playwright project (iPhone 13 profile in Chromium) and `e2e/features/mobile.feature` (no horizontal scroll at 360/390/430, stacked layout, 44 px targets, tap move/delete/add, markdown tap edit and tap outside, touch drag resize, Save Book download). Passed with `--repeat-each 10`. A "swipe over the editor scrolls the page" scenario was dropped: synthesized touch scrolling does not scroll even a plain page in headless Chromium here.
 
 ## Owner checklist (real iPhone, iOS Safari)

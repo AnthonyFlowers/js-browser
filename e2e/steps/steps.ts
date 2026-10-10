@@ -371,3 +371,13 @@ Then(
     expect(readFileSync(path!, "utf8")).toContain(text);
   }
 );
+
+Then(
+  "the Format button of cell {int} does not cover the editor",
+  async ({ page }, number: number) => {
+    const cell = cellAt(page, number);
+    const button = await boxOf(cell.getByRole("button", { name: "Format" }));
+    const lines = await boxOf(cell.locator(".monaco-editor .view-lines"));
+    expect(button.y + button.height).toBeLessThanOrEqual(lines.y + 1);
+  }
+);

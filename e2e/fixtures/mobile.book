@@ -1,0 +1,1 @@
+{"title": "mobile", "order": ["a", "b", "c"], "data": {"a": {"id": "a", "type": "code", "content": "const nums = [1,2,3,4].map(n=>n*n);\nshow(JSON.stringify(nums))"}, "b": {"id": "b", "type": "text", "content": "# Hello\n\nSome *notes* here"}, "c": {"id": "c", "type": "code", "content": "show('second cell')"}}}
