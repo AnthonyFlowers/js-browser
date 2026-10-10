@@ -61,5 +61,6 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-027 | Flaky e2e: moving and deleting cells | [done/JSB-027](../done/JSB-027-flaky-e2e-moving-and-deleting-cells.md) |
 | JSB-028 | Release review fixes for the stability sweep | [done/JSB-028](../done/JSB-028-release-review-fixes-for-the-stability-sweep.md) |
 | JSB-029 | Mobile fixes from the real-phone check | [done/JSB-029](../done/JSB-029-mobile-fixes-from-real-phone-check.md) |
+| JSB-030 | iOS selection handles drawn above the editor | [JSB-030](JSB-030-ios-selection-handles-in-the-editor.md) |
 
-Priority order: the stability sweep is done (JSB-029 real-phone mobile fixes included); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
+Priority order: the stability sweep is done (JSB-029 included; JSB-030 iOS selection handles is open, Medium); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.

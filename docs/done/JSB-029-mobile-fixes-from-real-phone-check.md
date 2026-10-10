@@ -20,8 +20,8 @@ Found by the owner on an iPhone (iOS Safari) after the PR #6 release, running th
 - [x] Save Book on iOS saves a file named `<title>.book`, not `<title>.book.json`
   ([screenshot](../stories/assets/JSB-029-save-book-json.png)); Load Book still accepts the saved file (and a `.book.json` saved
   by the current release)
-- [x] iOS selection handles: investigated; no clean fix without a real device (see Selection handles below), options
-  proposed ([screenshot](../stories/assets/JSB-029-selection-handles.png): after selecting `import` the blue handles are drawn
+- [x] iOS selection handles: investigated (see Selection handles below); the fix moved to [JSB-030](../stories/JSB-030-ios-selection-handles-in-the-editor.md)
+   ([screenshot](../stories/assets/JSB-029-selection-handles.png): after selecting `import` the blue handles are drawn
   above the editor, partly behind its top edge, not at the text)
 - [x] E2E scenarios cover what headless Chromium can check (preview wrapping, the saved file name); anything it cannot
   (real touch scrolling and selection handles) is noted here with the manual check for the owner
@@ -45,7 +45,7 @@ Owner results for the JSB-019 checklist: items 2, 4, 5 and 6 passed, JSB-016 (it
 - E2E (`e2e/features/mobile.feature`): a 600-character unbroken string has no horizontal overflow in the preview iframe; the saved
   download does not end in `.json` and its Blob type is not `application/json`.
 
-### Selection handles (not fixed)
+### Selection handles (not fixed, continued in JSB-030)
 
 On iPhone Monaco's hidden textarea is placed at the cursor line's top but is 0 or 1 px high (`textAreaEditContext.js`
 `_render`: only `isMacintosh` or accessibility mode gives it the line height; iPhone user agents do not contain "Macintosh").
