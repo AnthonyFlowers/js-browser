@@ -50,15 +50,12 @@ RootState = {
   bundles: {
     [cellId: string]: { loading: boolean; code: string; err: string } | undefined;
   };
-  files: {                                 // placeholder; only handles EXPORT_BOOK as a no-op
-    loading: boolean; error: string | null; localFiles: string[];
-  };
 }
 ```
 
 Action types (`src/state/action-types`): MOVE_CELL, DELETE_CELL, INSERT_CELL_AFTER, UPDATE_CELL,
 UPDATE_CELLS_TITLE, BUNDLE_START, BUNDLE_COMPLETE, FETCH_CELLS(_COMPLETE|_ERROR), SAVE_CELLS_ERROR,
-SAVE_CELLS_COMPLETE (unused), EXPORT_BOOK (unused) / _SUCCESS / _ERROR, IMPORT_BOOK(_COMPLETE|_ERROR).
+EXPORT_BOOK_SUCCESS / _ERROR, IMPORT_BOOK(_COMPLETE|_ERROR).
 Cell ids are 3-character random strings (`randomId` in `cellsReducer.ts`).
 
 ## Data flow: edit -> bundle -> preview
@@ -97,7 +94,7 @@ sequenceDiagram
 
 `bundler/index.ts` lazily calls `esbuild.initialize({ wasmURL })` once (memoized promise; the wasm is imported via
 Vite `?url`, so it is self-hosted and always matches the installed version, ADR-009) and then `esbuild.build`s
-with `bundle: true`, `write: false`, `define` for `process.env.NODE_ENV` and `global`, and a JSX factory of
+with `bundle: true`, `write: false`, `define` for `process.env.NODE_ENV` and `global` (`globalThis`), and a JSX factory of
 `_React.createElement` / `_React.Fragment`.
 
 ```mermaid
@@ -109,13 +106,14 @@ graph LR
   F -->|index.js| Raw["user code (cumulative), loader jsx"]
   F -->|cache hit| LF[("localforage 'filecache' (IndexedDB)")]
   F -->|*.css| CSS["axios GET, wrap CSS in JS that appends a style element (JSON.stringify)"]
-  F -->|other| JS["axios GET, loader jsx"]
+  F -->|other| JS["axios GET, loader by extension (.json: json, else jsx)"]
   CSS --> LF
   JS --> LF
 ```
 
 Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (`/\.css$/`) -> everything
-else. `resolveDir` for fetched files is derived from `request.responseURL` so relative imports inside packages
+else. Cache keys are prefixed with a version (`v3:`); on first use per page load, entries without the current
+prefix are removed. Root-absolute imports (`/x`) resolve to `https://unpkg.com/x`. `resolveDir` for fetched files is derived from `request.responseURL` so relative imports inside packages
 resolve (unpkg redirects to concrete versions/files).
 
 ## Editor (Monaco)
@@ -170,5 +168,5 @@ Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.
 | Features | single "default" book, no cell export, 2 cell types | named local books (book list/switcher over `cellcache`), per-cell file save, `css` cell type | JSB-010, 011, 012 |
 
 Expected structural changes: `index.html` moves to repo root, build output `dist/`, a `.github/workflows/`
-directory (deploy.yml, ci.yml), test files beside sources, `CellTypes` gains `"css"`, `state.cells` and the `files` slice may be reworked
+directory (deploy.yml, ci.yml), test files beside sources, `CellTypes` gains `"css"`, `state.cells` may be reworked
 to track the list of local books, and `useCumulativeCode` may inject CSS cells.
