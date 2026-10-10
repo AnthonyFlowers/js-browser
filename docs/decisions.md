@@ -198,7 +198,7 @@ immer `produce`, and plain thunks. JSB-004 raised whether to adopt Redux Toolkit
 JSB-004 (dependency upgrades) and JSB-006 (reducer tests as a safety net). JSB-004 does not change the state layer.
 
 **Consequences:** Less boilerplate and a maintained API; a contained refactor of `src/state` and its call sites, with
-direct `redux-thunk` and `immer` dependencies likely removed. Must be coordinated with JSB-007 (`files` reducer) and JSB-010.
+direct `redux-thunk` and `immer` dependencies likely removed. Must be coordinated with JSB-010.
 
 ## ADR-013: Highlight JSX in Monaco with Shiki (TextMate) instead of monaco-jsx-highlighter
 
