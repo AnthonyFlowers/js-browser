@@ -47,10 +47,10 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-013 | Per-model auto-compact settings | [JSB-013](JSB-013-per-model-autocompact-settings.md) |
 | JSB-014 | Migrate state to Redux Toolkit | [done/JSB-014](../done/JSB-014-migrate-state-to-redux-toolkit.md) |
 | JSB-015 | Adopt dev branch workflow | [done/JSB-015](../done/JSB-015-adopt-dev-branch-workflow.md) |
-| JSB-016 | Code cell preview sometimes stays on the loading bar (depends on JSB-018) | [JSB-016](JSB-016-preview-stuck-on-loading-bar.md) |
+| JSB-016 | Code cell preview sometimes stays on the loading bar (depends on JSB-018) | [done/JSB-016](../done/JSB-016-preview-stuck-on-loading-bar.md) |
 | JSB-017 | End-to-end tests in CI with Playwright | [done/JSB-017](../done/JSB-017-e2e-tests-in-ci.md) |
 | JSB-018 | Timeouts, retries and clear errors for package fetches | [done/JSB-018](../done/JSB-018-fetch-timeouts-retries-errors.md) |
-| JSB-019 | Mobile layout pass | [JSB-019](JSB-019-mobile-layout-pass.md) |
+| JSB-019 | Mobile layout pass | [done/JSB-019](../done/JSB-019-mobile-layout-pass.md) |
 | JSB-020 | Reduce bundle size (Monaco and other heavy dependencies) | [done/JSB-020](../done/JSB-020-reduce-bundle-size.md) |
 | JSB-021 | Share a book via URL | [JSB-021](JSB-021-share-book-via-url.md) |
 | JSB-022 | TypeScript in code cells | [JSB-022](JSB-022-typescript-cells.md) |
@@ -60,5 +60,6 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-026 | Gherkin e2e scenarios with playwright-bdd | [done/JSB-026](../done/JSB-026-gherkin-e2e-scenarios-with-playwright-bdd.md) |
 | JSB-027 | Flaky e2e: moving and deleting cells | [done/JSB-027](../done/JSB-027-flaky-e2e-moving-and-deleting-cells.md) |
 | JSB-028 | Release review fixes for the stability sweep | [done/JSB-028](../done/JSB-028-release-review-fixes-for-the-stability-sweep.md) |
+| JSB-029 | Mobile fixes from the real-phone check | [JSB-029](JSB-029-mobile-fixes-from-real-phone-check.md) |
 
-Priority order: the stability sweep comes first: JSB-019 next, then JSB-020 done (JSB-017 and JSB-018 done; JSB-016 awaits the live mobile check); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
+Priority order: the stability sweep is done except JSB-029 (real-phone mobile fixes, High); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
