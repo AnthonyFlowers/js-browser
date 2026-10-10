@@ -69,14 +69,6 @@ export interface SaveCellsErrorAction {
   payload: string;
 }
 
-export interface SaveCellsCompleteAction {
-  type: ActionType.SAVE_CELLS_COMPLETE;
-}
-
-export interface ExportBookAction {
-  type: ActionType.EXPORT_BOOK;
-}
-
 export interface ExportBookSuccess {
   type: ActionType.EXPORT_BOOK_SUCCESS;
 }
@@ -116,8 +108,6 @@ export type Action =
   | FetchCellsCompleteAction
   | FetchCellsErrorAction
   | SaveCellsErrorAction
-  | SaveCellsCompleteAction
-  | ExportBookAction
   | ExportBookSuccess
   | ExportBookError
   | UpdateTitleAction

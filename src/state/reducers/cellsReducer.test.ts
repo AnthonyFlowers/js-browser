@@ -25,7 +25,9 @@ const run = (state: CellsState | undefined, action: Action) =>
 
 describe("cellsReducer", () => {
   it("returns the initial state", () => {
-    const initial = reducer(undefined, { type: ActionType.EXPORT_BOOK });
+    const initial = reducer(undefined, {
+      type: ActionType.EXPORT_BOOK_SUCCESS,
+    });
     expect(initial).toEqual({
       loading: false,
       error: null,

@@ -27,7 +27,7 @@ const bundle = async (rawCode: string) => {
       plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
       define: {
         "process.env.NODE_ENV": "'production'",
-        global: "window",
+        global: "globalThis",
       },
       // Relies on `_React` being imported by the `show()` prelude in use-cumulative-code.ts.
       jsxFactory: "_React.createElement",
