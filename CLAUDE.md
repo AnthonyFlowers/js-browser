@@ -103,7 +103,8 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
    the index in `docs/stories/README.md` (link now points to `docs/done/`).
 5. Record any significant technical choice as a new ADR in `docs/decisions.md`.
 6. Keep `docs/architecture.md` current whenever structure or data flow changes.
-7. Do not commit unless asked.
+7. Do not commit unless asked. Never add Claude Code attribution to commits or PRs (no `Co-Authored-By: Claude`,
+   `Claude-Session:` trailers, or "Generated with Claude Code" lines).
 8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch; once all local checks pass,
    merge it into `dev` and push (no PR needed; CI runs on every push to `dev` and must stay green). Releases are
    `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge to `main` deploys to GitHub Pages).
