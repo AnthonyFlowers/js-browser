@@ -104,7 +104,9 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 5. Record any significant technical choice as a new ADR in `docs/decisions.md`.
 6. Keep `docs/architecture.md` current whenever structure or data flow changes.
 7. Do not commit unless asked. Never add Claude Code attribution to commits or PRs (no `Co-Authored-By: Claude`,
-   `Claude-Session:` trailers, or "Generated with Claude Code" lines).
+   `Claude-Session:` trailers, or "Generated with Claude Code" lines). Commit as the owner: before committing, set
+   `git config user.name "Anthony Flowers"` and
+   `git config user.email "22030883+AnthonyFlowers@users.noreply.github.com"` (the container default is Claude).
 8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch; once all local checks pass,
    merge it into `dev` and push (no PR needed; CI runs on every push to `dev` and must stay green). Releases are
    `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge to `main` deploys to GitHub Pages).
