@@ -47,9 +47,9 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-013 | Per-model auto-compact settings | In Progress | [JSB-013](JSB-013-per-model-autocompact-settings.md) |
 | JSB-014 | Migrate state to Redux Toolkit | Done | [done/JSB-014](../done/JSB-014-migrate-state-to-redux-toolkit.md) |
 | JSB-015 | Adopt dev branch workflow | Done | [done/JSB-015](../done/JSB-015-adopt-dev-branch-workflow.md) |
-| JSB-016 | Code cell preview sometimes stays on the loading bar (depends on JSB-018) | Todo | [JSB-016](JSB-016-preview-stuck-on-loading-bar.md) |
+| JSB-016 | Code cell preview sometimes stays on the loading bar (depends on JSB-018) | In Progress | [JSB-016](JSB-016-preview-stuck-on-loading-bar.md) |
 | JSB-017 | End-to-end tests in CI with Playwright | Todo | [JSB-017](JSB-017-e2e-tests-in-ci.md) |
-| JSB-018 | Timeouts, retries and clear errors for package fetches | Todo | [JSB-018](JSB-018-fetch-timeouts-retries-errors.md) |
+| JSB-018 | Timeouts, retries and clear errors for package fetches | Done | [done/JSB-018](../done/JSB-018-fetch-timeouts-retries-errors.md) |
 | JSB-019 | Mobile layout pass | Todo | [JSB-019](JSB-019-mobile-layout-pass.md) |
 | JSB-020 | Reduce bundle size (Monaco and other heavy dependencies) | Todo | [JSB-020](JSB-020-reduce-bundle-size.md) |
 | JSB-021 | Share a book via URL | Todo | [JSB-021](JSB-021-share-book-via-url.md) |

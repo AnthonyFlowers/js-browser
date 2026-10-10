@@ -87,8 +87,9 @@ sequenceDiagram
    JSX into `#root`, or JSON/HTML) or `var show = () => {};` for earlier cells, followed by
    the cell content. Text cells are skipped. Result: each cell sees all earlier code; only its own `show` draws.
 2. `CodeCell` effect dispatches `createBundle({ cellId, input: cumulativeCode })`.
-3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors are caught and
-   returned as `err` text.
+3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors (including network
+   failures and the 120 s deadline) are caught and returned as `err` text. `bundlesSlice` stores the thunk
+   `requestId` per cell and ignores a result from a superseded request.
 4. `Preview` writes a fixed HTML shell into `iframe.srcdoc` (`sandbox="allow-scripts"`), then after 200 ms posts
    the bundle to it; the shell `eval`s messages and renders runtime errors in red.
 
@@ -112,6 +113,14 @@ graph LR
   CSS --> LF
   JS --> LF
 ```
+
+Reliability limits (JSB-018, ADR-019): every package request has a 30 s timeout and 3 attempts (500 ms, 1000 ms
+backoff) for network errors, timeouts, 5xx and 429, but not 404; the final error reads
+`Failed to fetch <url>: <reason>`. `bundle()` races the build against a 120 s deadline (`BUNDLE_DEADLINE_MS`) that also
+aborts in-flight requests through an `AbortSignal` passed to `fetchPlugin`, so `bundles[cellId].loading` always returns to
+false. Waiting for `esbuild.initialize` times out after 60 s (`INIT_TIMEOUT_MS`); a later bundle re-awaits the same
+pending promise because esbuild refuses a second `initialize` while one is pending. IndexedDB cache calls are best effort
+(3 s, failure counts as a miss).
 
 Handler order in `fetch-plugin.ts`: entry file -> cache lookup (`/.*/`) -> css (`/\.css$/`) -> everything
 else. Cache keys are prefixed with a version (`v3:`); on first use per page load, entries without the current
