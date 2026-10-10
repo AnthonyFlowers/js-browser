@@ -274,3 +274,18 @@ build pass locally. `dev` -> `main` release PRs remain, opened by Claude and mer
 
 **Consequences:** Faster integration; a red CI run on `dev` must be fixed immediately since there is no PR gate.
 
+## ADR-018: Claude batches releases and has an Opus subagent review the release PR
+
+- **Date:** 2026-10-10
+- **Status:** Accepted
+- **Story:** JSB-015
+
+**Context:** ADR-017 removed PRs into `dev`, so the release PR is the only review gate before a deploy. The owner
+wants releases to arrive already reviewed.
+
+**Decision:** Work proceeds story by story, merged into `dev`. Claude decides when a batch is ready and opens the
+`dev` -> `main` release PR. Before asking the owner to merge, Claude has a fresh Opus subagent review the release PR
+and addresses its findings. The owner merges. Amends ADR-017.
+
+**Consequences:** Every release gets an independent review without the owner reading each diff first; the owner keeps
+the final merge decision. Release timing is Claude's call, not a fixed cadence.

@@ -5,6 +5,8 @@
 
 An in-browser JavaScript/JSX notebook. Write code and markdown cells, bundle the code in the browser, and see the result next to each cell. No backend required.
 
+A personal tool for quickly trying JS and npm packages, built to work well on desktop and mobile.
+
 **Live demo:** https://anthonyflowers.github.io/js-browser/
 
 ## Features
@@ -70,8 +72,8 @@ React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and 
 
 GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` changes. CI (lint, format check, typecheck, tests, build) runs on pull requests.
 
-- Work is done on branches that open pull requests into `dev`.
-- Releases are `dev` to `main` pull requests.
+- Work is done on story branches that are merged into `dev` once checks pass.
+- Releases are `dev` to `main` pull requests, reviewed before the owner merges.
 - Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
 
 ## Roadmap

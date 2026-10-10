@@ -10,6 +10,12 @@ by esbuild-wasm, bare imports are resolved to unpkg.com, and the result runs in 
 next to each cell. A `show()` helper renders values/JSX into the cell preview. Cells share scope
 cumulatively (cell N sees code from cells 1..N-1). Live site: https://anthonyflowers.github.io/js-browser/
 
+## Project direction
+
+- js-browser is the owner's personal tool for quickly trying JS and npm packages.
+- It must work well on both desktop and mobile; mobile is first-class, not an afterthought.
+- Current priority: a stability sweep (JSB-017 to JSB-020, plus JSB-016) before new features.
+
 Architecture details: `docs/architecture.md`. Decisions: `docs/decisions.md`. Work tracking: `docs/`.
 
 ## Tech stack
@@ -108,9 +114,10 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
    `git config user.name "Anthony Flowers"` and
    `git config user.email "22030883+AnthonyFlowers@users.noreply.github.com"` (the container default is Claude).
 8. Branching: `dev` is the long-lived integration branch. Story work goes on a branch; once all local checks pass,
-   merge it into `dev` and push (no PR needed; CI runs on every push to `dev` and must stay green). Releases are
-   `dev` -> `main` PRs, opened by Claude and merged by the owner (a merge to `main` deploys to GitHub Pages).
-   Never push directly to `main` (ADR-017).
+   merge it into `dev` and push (no PR needed; CI runs on every push to `dev` and must stay green). Work proceeds
+   story by story. Claude decides when a batch of stories is ready and opens the `dev` -> `main` release PR. Before
+   asking the owner to merge, have a fresh Opus subagent review the release PR and address its findings. The owner
+   merges; a merge to `main` deploys. Never push directly to `main` (ADR-017, ADR-018).
 9. Deleting any branch (e.g. `gh-pages`, `local-serve`) requires explicit owner confirmation after showing the
    owner what is on it.
 

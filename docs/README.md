@@ -22,7 +22,11 @@
 ## Branching and release
 
 Story work happens on a branch and is merged directly into `dev` once all local checks pass (no PR; CI runs on every
-push to `dev`). Releases are `dev` -> `main` PRs, opened by Claude and merged by the owner; a merge to `main` deploys to
-GitHub Pages. Never push directly to `main` (ADR-017). Branch deletions need owner confirmation (ADR-010).
+push to `dev`). Claude decides when a batch of stories is ready and opens the `dev` -> `main` release PR; before asking
+the owner to merge, a fresh Opus subagent reviews it and its findings are addressed. The owner merges, and a merge to
+`main` deploys to GitHub Pages. Never push directly to `main` (ADR-017, ADR-018). Branch deletions need owner
+confirmation (ADR-010).
+
+Current priority is the stability sweep (JSB-016 to JSB-020) before new features; see the index in `stories/README.md`.
 
 IDs are never reused. Story files are never deleted.
