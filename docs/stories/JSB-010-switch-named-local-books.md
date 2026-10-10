@@ -20,8 +20,11 @@ Owner decision: a book picker plus rename. The title is an editable field, and a
 - [ ] Bundles state (`state.bundles`) is reset or recomputed when switching books so previews do not show stale output
 - [ ] Unsaved/pending debounced save (250ms in `persist-listener.ts`) is flushed before switching
 - [ ] Imported books (`importCells`) are saved under their title and appear in the list; title collisions handled
+- [ ] The title input reflects the loaded or selected book (including after Load Book or a switch) and never dispatches a stale title over it
 - [ ] Unit tests for new reducers/action creators; `docs/architecture.md` state shape and persistence sections updated
 
 ## Notes
 
 Existing code already has partial scaffolding: `fetchCells(bookTitle)`, `getCachedBooks`, title in state. `getCachedBooks` is not used by any component yet. The book list can live in the cells slice or a small new slice.
+
+Book Title quirk found during JSB-017 (e2e): the input in `top-menu.tsx` is `disabled` and its `title` state is seeded once from the store (`useState(initialTitle)`), so it never follows `state.cells.title`. After Load Book (`importCells` sets the store title) or any other store-side title change, the input still shows the old title. Its effect also re-dispatches `updateTitle(title)` 1 s after mount and after every local title change, using that stale local value, so it can overwrite the title of a book loaded or imported in the meantime. Fix by deriving the value from the store (or syncing local state to it) and dispatching only on user edits.
