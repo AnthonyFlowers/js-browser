@@ -18,6 +18,11 @@ export const unpkgPathPlugin = (): esbuild.Plugin => {
         };
       });
 
+      // root-absolute imports are paths on unpkg
+      build.onResolve({ filter: /^\// }, (args: esbuild.OnResolveArgs) => {
+        return { namespace: "a", path: "https://unpkg.com" + args.path };
+      });
+
       // handle main file of a module (every remaining, i.e. bare, import)
       build.onResolve({ filter: /.*/ }, (args: esbuild.OnResolveArgs) => {
         return {
