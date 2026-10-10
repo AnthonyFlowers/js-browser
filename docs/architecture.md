@@ -142,7 +142,8 @@ language definition and the TypeScript feature register module, instead of `edit
 Workers come from Vite `?worker` imports (`monaco-editor/editor/editor.worker`, `monaco-editor/language/typescript/ts.worker`)
 registered on `self.MonacoEnvironment.getWorker`; the JS/TS worker serves `javascript`, everything else uses the editor worker.
 JSX highlighting and the `dark-plus` theme come from Shiki via `@shikijs/monaco` (ADR-013). `CodeEditor` uses `onMount`;
-the Format button dynamically imports `prettier/standalone` with the babel and estree plugins on first click.
+each lazy editor (`TextEditor`, `CodeEditor`) sits inside an `ErrorBoundary` (message plus Reload button), and `src/index.tsx` reloads once on `vite:preloadError`
+(guarded by a `sessionStorage` flag) so a stale tab after a deploy recovers. The Format button dynamically imports `prettier/standalone` with the babel and estree plugins on first click.
 The markdown cell (`TextEditor`, loaded with `React.lazy` from `cell-list-item.tsx`, empty card as fallback) uses
 `@uiw/react-md-editor` 4 with `markdown-editor.css` and `data-color-mode="dark"`; its chunk (md-editor, refractor, micromark) is
 only fetched when the book has a text cell. `streamsaver` is imported on the first desktop Save Book. The esbuild wasm is not

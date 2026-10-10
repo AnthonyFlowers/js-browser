@@ -21,8 +21,11 @@ if [ "$have" != "$want" ]; then
   export PATH="$bin:$PATH"
 fi
 
-if [ ! -d node_modules ]; then
+lock_hash="$(sha256sum package-lock.json | cut -d' ' -f1)"
+stamp=node_modules/.package-lock-hash
+if [ ! -d node_modules ] || [ "$(cat "$stamp" 2>/dev/null || true)" != "$lock_hash" ]; then
   npm ci --no-audit --no-fund --loglevel=error
+  echo "$lock_hash" > "$stamp"
 fi
 
 echo "node $(node -v), deps ready"

@@ -43,6 +43,22 @@ Given(
   }
 );
 
+Given("the {string} chunk fails to load", async ({ page }, chunk: string) => {
+  await page.route(`**/assets/${chunk}-*.js`, (route) => route.abort());
+});
+
+Given(
+  "the page has already reloaded once after a chunk error",
+  async ({ page }) => {
+    await page.addInitScript(() => {
+      // The sandboxed preview iframes also run init scripts but have no sessionStorage.
+      if (window === window.top) {
+        sessionStorage.setItem("preload-error-reloaded", "1");
+      }
+    });
+  }
+);
+
 Given("the notebook is open", async ({ page }) => {
   await gotoApp(page);
 });
@@ -383,5 +399,23 @@ Then(
     const button = await boxOf(cell.getByRole("button", { name: "Format" }));
     const lines = await boxOf(cell.locator(".monaco-editor .view-lines"));
     expect(button.y + button.height).toBeLessThanOrEqual(lines.y + 1);
+  }
+);
+
+Then(
+  "cell {int} shows the load error {string} with a Reload button",
+  async ({ page }, number: number, message: string) => {
+    const alert = cellAt(page, number).getByRole("alert");
+    await expect(alert).toContainText(message);
+    await expect(alert.getByRole("button", { name: "Reload" })).toBeVisible();
+  }
+);
+
+Then(
+  "cell {int} shows the format error {string}",
+  async ({ page }, number: number, message: string) => {
+    await expect(cellAt(page, number).getByRole("alert")).toContainText(
+      message
+    );
   }
 );

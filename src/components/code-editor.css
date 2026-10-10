@@ -52,3 +52,22 @@
     height: auto !important;
   }
 }
+
+.editor-wrapper .format-error {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  z-index: 20;
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 767px) {
+  .editor-wrapper .format-error {
+    position: static;
+    flex: none;
+    margin: 0 5px 4px;
+  }
+}

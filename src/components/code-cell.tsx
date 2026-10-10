@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { Cell, createBundle, updateCell } from "../state";
 import Preview from "./preview";
 import Resizable from "./resizable";
+import ErrorBoundary from "./error-boundary";
 import { useAppDispatch } from "../hooks/use-app-dispatch";
 import { useAppSelector } from "../hooks/use-app-selector";
 import { useCumulativeCode } from "../hooks/use-cumulative-code";
@@ -36,14 +37,16 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const narrow = useMediaQuery(NARROW_QUERY);
 
   const editor = (
-    <Suspense fallback={null}>
-      <CodeEditor
-        initialValue={cell.content}
-        onChange={(value) =>
-          dispatch(updateCell({ id: cell.id, content: value }))
-        }
-      />
-    </Suspense>
+    <ErrorBoundary message="The code editor failed to load.">
+      <Suspense fallback={null}>
+        <CodeEditor
+          initialValue={cell.content}
+          onChange={(value) =>
+            dispatch(updateCell({ id: cell.id, content: value }))
+          }
+        />
+      </Suspense>
+    </ErrorBoundary>
   );
 
   const preview = (

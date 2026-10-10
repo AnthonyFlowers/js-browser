@@ -1,14 +1,19 @@
-import { useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 /** Keep in sync with the `max-width: 767px` media queries in the component CSS. */
 export const NARROW_QUERY = "(max-width: 767px)";
 
-export const useMediaQuery = (query: string) =>
-  useSyncExternalStore(
-    (notify) => {
+export const useMediaQuery = (query: string) => {
+  const subscribe = useCallback(
+    (notify: () => void) => {
       const list = window.matchMedia(query);
       list.addEventListener("change", notify);
       return () => list.removeEventListener("change", notify);
     },
+    [query]
+  );
+  return useSyncExternalStore(
+    subscribe,
     () => window.matchMedia(query).matches
   );
+};

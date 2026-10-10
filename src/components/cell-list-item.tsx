@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import { Cell } from "../state";
 import CodeCell from "./code-cell";
 import ActionBar from "./action-bar";
+import ErrorBoundary from "./error-boundary";
 
 // The markdown stack (react-md-editor, refractor, micromark) is only fetched once a text cell exists.
 const TextEditor = lazy(() => import("./text-editor"));
@@ -25,15 +26,17 @@ const CellListItem: React.FC<CellListItemProps> = ({ cell }) => {
   } else {
     child = (
       <>
-        <Suspense
-          fallback={
-            <div className="text-editor card">
-              <div className="card-content" aria-busy="true" />
-            </div>
-          }
-        >
-          <TextEditor cell={cell} />
-        </Suspense>
+        <ErrorBoundary message="The text editor failed to load.">
+          <Suspense
+            fallback={
+              <div className="text-editor card">
+                <div className="card-content" aria-busy="true" />
+              </div>
+            }
+          >
+            <TextEditor cell={cell} />
+          </Suspense>
+        </ErrorBoundary>
         <ActionBar id={cell.id} />
       </>
     );

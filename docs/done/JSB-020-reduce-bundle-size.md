@@ -62,6 +62,13 @@ editor, colour picker, code lens, inlay hints, inline completions, peek/referenc
 and similar) and from moving Prettier off the editor path. The Monaco core (`editor.api`) cannot shrink further without
 forking it.
 
+### Follow-up (JSB-028)
+
+The release review found that go to line, tab focus mode (accessibility), go to definition, the copy/paste contribution and font
+zoom had been dropped without asking. They were restored in `monaco-setup.ts`. Measured delta: `register` 803.58 -> 813.19 KB raw
+(202.02 -> 204.67 gzip), `tsMode` 419.86 -> 410.13 KB raw (109.94 -> 107.43 gzip) as shared modules moved between chunks; total
+`dist/assets/*.js` 13,762,066 -> 13,761,952 bytes. Effectively free.
+
 ### Findings per dependency
 
 - Monaco: `monaco-setup.ts` now imports `editor.api`, a list of contribution modules, the JavaScript language definition and the
