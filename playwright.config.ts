@@ -1,10 +1,17 @@
 import { defineConfig, devices } from "@playwright/test";
+import { defineBddConfig } from "playwright-bdd";
 
 const PORT = 4173;
 const CI = !!process.env.CI;
 
+// `bddgen` compiles e2e/features/*.feature into this directory; it is gitignored.
+const testDir = defineBddConfig({
+  features: "e2e/features/**/*.feature",
+  steps: "e2e/steps/**/*.ts",
+});
+
 export default defineConfig({
-  testDir: "./e2e",
+  testDir,
   fullyParallel: true,
   timeout: 60_000,
   expect: { timeout: 15_000 },

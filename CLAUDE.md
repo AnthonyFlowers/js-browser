@@ -26,7 +26,7 @@ Current:
 - Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts`, ADR-011); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
-- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment), Playwright 1.64 (`@playwright/test`, Chromium, `e2e/`; JSB-017, ADR-021).
+- Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment), Playwright 1.64 (`@playwright/test`, Chromium, `e2e/`; JSB-017, ADR-021) with playwright-bdd 9 for Gherkin features (JSB-026, ADR-022).
 - Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build (job `check`), then the Playwright suite (job `e2e`), on PRs to `dev`/`main` and pushes to `dev`.
 
 ## Commands
@@ -41,15 +41,17 @@ npm run format          # Prettier --write
 npm run format:check    # Prettier --check (CI)
 npm run typecheck       # tsc --noEmit
 npm test                # Vitest (vitest run)
-npm run test:e2e        # Playwright e2e: builds, serves `vite preview` on :4173, runs Chromium
+npm run test:e2e        # Gherkin e2e: bddgen, builds, serves `vite preview` on :4173, runs Chromium
 ```
 
 CI runs `lint`, `format:check`, `typecheck` (app and `e2e/`), `test` and `build`, plus `test:e2e` in a separate job; run them all before merging into `dev` or opening a PR.
 Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsSlice.test.ts` beside `cellsSlice.ts`);
 bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
-E2E tests live in `e2e/*.spec.ts` (Vitest ignores them). `e2e/mock-unpkg.ts` serves unpkg.com from `e2e/fixtures/unpkg/`
+E2E tests are Gherkin `.feature` files in `e2e/features/` with steps in `e2e/steps/`, compiled by playwright-bdd into the
+gitignored `.features-gen/` (Vitest ignores them). `e2e/mock-unpkg.ts` serves unpkg.com from `e2e/fixtures/unpkg/`
 (stub `react`, `react-dom/client`, a helper and a CSS package) with `stall`/`slow` modes and a capped XHR timeout; use it
 for any test that needs packages or a stalled/slow network. `e2e/app.ts` has the page helpers (add cell, set code, preview).
+New stories add or extend scenarios and may phrase acceptance criteria as scenarios; reuse existing steps first.
 
 There is no manual deploy command (see Deployment).
 
@@ -71,7 +73,7 @@ eslint.config.js, .prettierrc  lint/format config (tests are `src/**/*.test.ts`,
 .github/workflows/          deploy.yml (Pages), ci.yml (checks)
 .claude/                    settings.json (hooks, permissions), agents/ (subagent definitions)
 scripts/claude/             session-start.sh (SessionStart hook: Node from .nvmrc + npm ci)
-e2e/                        Playwright specs, mock-unpkg.ts, app.ts helpers, fixtures/ (unpkg packages, sample.book)
+e2e/                        features/ (Gherkin), steps/, mock-unpkg.ts, app.ts helpers, fixtures/ (unpkg packages, sample.book)
 docs/                       stories/, done/, architecture.md, decisions/ (one ADR per file)
 ```
 

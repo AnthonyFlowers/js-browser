@@ -26,3 +26,4 @@ yarn-error.log*
 # Playwright
 test-results/
 playwright-report/
+.features-gen/

@@ -166,10 +166,11 @@ checks out, sets up Node from `.nvmrc` (npm cache), runs `npm ci` and `npm run b
 `.github/workflows/ci.yml` (JSB-006) runs on pull requests to `dev`/`main` and pushes to `dev`: job `check` (`npm ci`, `lint`, `format:check`, `typecheck`, `test`, `build` on Node from `.nvmrc`) and job `e2e` (needs `check`, see below).
 Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.test.ts` beside their sources.
 
-## End-to-end tests (JSB-017, ADR-021)
+## End-to-end tests (JSB-017, JSB-026, ADR-021, ADR-022)
 
 `playwright.config.ts` runs Chromium against the production build: its `webServer` runs `npm run build` (skipped with
-`E2E_SKIP_BUILD`) then `vite preview` on port 4173 (base `/js-browser/`). Specs are `e2e/*.spec.ts`; each test gets a
+`E2E_SKIP_BUILD`) then `vite preview` on port 4173 (base `/js-browser/`). Tests are Gherkin scenarios in `e2e/features/*.feature` with steps in `e2e/steps/` (`playwright-bdd`; `npm run test:e2e`
+runs `bddgen`, which generates Playwright specs into the gitignored `.features-gen/`, then `playwright test`). Each test gets a
 fresh browser context, so IndexedDB (cells and the file cache) starts empty. `e2e/mock-unpkg.ts` fulfills every
 `https://unpkg.com/**` request from `e2e/fixtures/unpkg/<name>@<version>/` (stub `react`, `react-dom/client`,
 `tiny-helper`, `tiny-styles`); unknown packages answer 404. Playwright cannot route the hop after a fulfilled 302, so an

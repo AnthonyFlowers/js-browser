@@ -9,6 +9,7 @@ export default tseslint.config(
   {
     ignores: [
       "dist",
+      ".features-gen",
       "node_modules",
       "coverage",
       "playwright-report",
@@ -36,6 +37,11 @@ export default tseslint.config(
   {
     files: ["e2e/**/*.ts", "playwright.config.ts"],
     languageOptions: { globals: globals.node },
+    rules: {
+      // Playwright fixtures call `use(...)` and require destructured parameters.
+      "react-hooks/rules-of-hooks": "off",
+      "no-empty-pattern": "off",
+    },
   },
   // Must be last: turns off rules that conflict with Prettier.
   eslintConfigPrettier

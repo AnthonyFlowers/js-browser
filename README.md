@@ -63,7 +63,7 @@ Then open http://localhost:5173/js-browser/.
 | `npm run format:check` | Check formatting (used in CI)         |
 | `npm run typecheck`    | Type-check with `tsc --noEmit`        |
 | `npm test`             | Run the Vitest test suite             |
-| `npm run test:e2e`     | Run the Playwright end-to-end tests   |
+| `npm run test:e2e`     | Run the Gherkin end-to-end tests      |
 
 ## Tech stack
 

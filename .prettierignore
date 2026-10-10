@@ -6,3 +6,4 @@ public
 *.md
 playwright-report
 test-results
+.features-gen

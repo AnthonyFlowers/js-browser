@@ -42,3 +42,4 @@ history (supersede or amend with a new ADR instead, and link the related ADRs wi
 - [ADR-019: Bounded fetches with retry, a bundle deadline and a best-effort cache](ADR-019-bounded-fetches-with-retry-a-bundle-deadline-and-a-best-effort-cache.md)
 - [ADR-020: Folder as story status, one file per ADR, and Claude session tooling](ADR-020-folder-as-status-one-file-per-adr-and-claude-session-tooling.md)
 - [ADR-021: Playwright end-to-end tests with fixture-routed unpkg](ADR-021-playwright-e2e-with-fixture-routed-unpkg.md)
+- [ADR-022: Gherkin e2e scenarios with playwright-bdd (amends ADR-021)](ADR-022-gherkin-e2e-scenarios-with-playwright-bdd.md)

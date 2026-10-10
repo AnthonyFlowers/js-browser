@@ -57,5 +57,6 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-023 | Show console output in cell previews | [JSB-023](JSB-023-console-output-in-previews.md) |
 | JSB-024 | Offline support and installable PWA | [JSB-024](JSB-024-offline-pwa.md) |
 | JSB-025 | Workflow efficiency for Claude Code sessions | [done/JSB-025](../done/JSB-025-workflow-efficiency-for-claude-sessions.md) |
+| JSB-026 | Gherkin e2e scenarios with playwright-bdd | [done/JSB-026](../done/JSB-026-gherkin-e2e-scenarios-with-playwright-bdd.md) |
 
 Priority order: the stability sweep comes first: JSB-019 next, then JSB-020 (JSB-017 and JSB-018 done; JSB-016 awaits the live mobile check); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
