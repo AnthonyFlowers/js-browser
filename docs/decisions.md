@@ -233,3 +233,28 @@ Preview `show()` now renders JSX with `react-dom/client` `createRoot`, because u
 
 **Consequences:** One version of Prettier serves tool and runtime. User code that pins React 18 from unpkg and calls
 `ReactDOM.render` itself still works; only the helper changed. The unpinned `react`/`react-dom` imports resolve to the latest versions.
+
+## ADR-015: Persist with a listener middleware
+
+- **Date:** 2026-10-10
+- **Status:** Accepted
+- **Story:** JSB-014
+
+**Context:** The hand-written persist middleware debounced `saveCells` by 250 ms after cell-mutating actions using a module-level timer.
+
+**Decision:** Use RTK's `createListenerMiddleware` (`src/state/persist-listener.ts`) with `isAnyOf(moveCell, updateCell, insertCellAfter, deleteCell, updateTitle)`; the effect calls `cancelActiveListeners()`, `delay(250)` and dispatches `saveCells()`. It is appended after the default middleware in `configureStore`. Thunk-based fetch/import do not match, so they do not trigger saves.
+
+**Consequences:** No manual timer or action-type list; matching is by action creator, so a new mutating reducer must be added to the matcher.
+
+## ADR-016: Typed hooks `useAppDispatch` / `useAppSelector` instead of `useActions`
+
+- **Date:** 2026-10-10
+- **Status:** Accepted
+- **Story:** JSB-014
+
+**Context:** `useActions` bound a bag of hand-written action creators with `bindActionCreators`. Slice actions and `createAsyncThunk` thunks are plain exports, and bound thunk typing is awkward.
+
+**Decision:** Drop `useActions` and `useTypedSelector`; provide `useAppDispatch` and `useAppSelector` built with react-redux's `.withTypes<AppDispatch>()` / `.withTypes<RootState>()`, the pattern recommended by RTK. Components import action creators from `src/state` and call `dispatch(...)`.
+
+**Consequences:** Call sites are slightly more verbose but fully typed, including thunk results (`unwrap()`); `dispatch` is stable so it replaces the bound actions in effect dependency lists.
+

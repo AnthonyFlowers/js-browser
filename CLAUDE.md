@@ -15,15 +15,13 @@ Architecture details: `docs/architecture.md`. Decisions: `docs/decisions.md`. Wo
 ## Tech stack
 
 Current:
-- React 19, Redux 5 (`legacy_createStore`, redux-thunk 3, immer 11 `produce` reducers), react-redux 9, TypeScript 5
+- React 19, Redux Toolkit 2 (`configureStore`, `createSlice`, `createAsyncThunk`, listener middleware; ADR-012/015/016), react-redux 9, TypeScript 5
 - Vite 8 + @vitejs/plugin-react (`vite.config.ts`, `base: "/js-browser/"`, output `dist/`), Node 24 + npm
 - Monaco 0.57 bundled locally via Vite `?worker` imports + @monaco-editor/react 4.7 (`src/monaco-setup.ts`, ADR-011); JSX highlighting by Shiki (`@shikijs/monaco`, ADR-013); Prettier 3 (`prettier/standalone`) for the Format button; @uiw/react-md-editor 4
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
 - Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment).
 - Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build on PRs to `dev`/`main` and pushes to `dev`.
-
-Target (see JSB-014): Redux Toolkit.
 
 ## Commands
 
@@ -40,7 +38,7 @@ npm test                # Vitest (vitest run)
 ```
 
 CI runs `lint`, `format:check`, `typecheck`, `test` and `build`; run them all before opening a PR.
-Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsReducer.test.ts` beside `cellsReducer.ts`);
+Tests live next to the source as `src/**/*.test.ts` (e.g. `cellsSlice.test.ts` beside `cellsSlice.ts`);
 bundler plugin tests call the `onResolve`/`onLoad` callbacks with a fake `PluginBuild` (no esbuild wasm).
 
 There is no manual deploy command (see Deployment).
@@ -51,11 +49,11 @@ There is no manual deploy command (see Deployment).
 src/index.tsx, App.tsx      entry; Provider + TopMenu + CellList
 src/components/             one .tsx + one .css per component (cell-list, code-cell, code-editor,
                             text-editor, preview, resizable, top-menu, book-importer, add-cell, action-bar...)
-src/hooks/                  use-actions (bound action creators), use-typed-selector,
+src/hooks/                  use-app-dispatch, use-app-selector (typed react-redux hooks),
                             use-cumulative-code (concatenates code of cells 1..N + show() helper)
-src/state/                  store.ts, reducers/ (cells, bundles), actions/, action-types/,
-                            action-creators/ (cells, bundles, fetchCells = persistence + book IO),
-                            middlewares/persist-middleware.ts (debounced save), cell.ts (Cell type)
+src/state/                  store.ts (configureStore, AppDispatch), reducers.ts (RootState), slices/ (cells, bundles),
+                            thunks/ (createBundle; fetch/save/export/import cells = persistence + book IO),
+                            persist-listener.ts (debounced save), cell.ts (Cell, Book types)
 src/bundler/                index.ts (esbuild initialize/build) + plugins/unpkg-path-plugin.ts, fetch-plugin.ts
 index.html, vite.config.ts  Vite entry HTML (repo root) and config
 public/                     static assets (favicon, icons, manifest.json, robots.txt)
@@ -84,9 +82,11 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 
 - Match existing style: function components (`React.FC`), hooks, TypeScript strict, double quotes,
   semicolons, 2-space indent (enforced by Prettier, `.prettierrc`; ESLint must stay clean).
-- State access only through typed hooks in `src/hooks` (`useTypedSelector`, `useActions`); new action
-  creators go in `src/state/action-creators` and are exported from its index.
-- Reducers use immer `produce`; action types live in `action-types`, shapes in `actions`.
+- State access only through typed hooks in `src/hooks` (`useAppSelector`, `useAppDispatch`); components
+  `dispatch(...)` slice actions and thunks imported from `src/state`.
+- Reducers are RTK `createSlice` slices in `src/state/slices` (immer is built in); async work uses
+  `createAsyncThunk` in `src/state/thunks`. A new cell-mutating action must be added to the matcher in
+  `persist-listener.ts` so it is autosaved.
 - Keep comments light: only comment code that is genuinely complex or non-obvious; prefer clear names over comments.
 - Each component has its own `.css` file next to it; filenames are kebab-case.
 - Node 24 and npm only (keep `package-lock.json`); no yarn/pnpm.

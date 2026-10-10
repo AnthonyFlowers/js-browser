@@ -64,7 +64,7 @@ Then open http://localhost:5173/js-browser/.
 
 ## Tech stack
 
-React, Redux, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and Vitest, with ESLint and Prettier for code quality.
+React, Redux Toolkit, TypeScript, Vite, Monaco Editor, esbuild-wasm, Bulma, and Vitest, with ESLint and Prettier for code quality.
 
 ## Deployment and workflow
 
@@ -79,7 +79,6 @@ GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` 
 - [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
 - [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
 - [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)
-- [Migrate state to Redux Toolkit](docs/stories/JSB-014-migrate-state-to-redux-toolkit.md) (JSB-014)
 
 ## License
 

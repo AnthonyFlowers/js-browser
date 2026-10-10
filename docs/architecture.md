@@ -31,12 +31,14 @@ graph TD
 - `CellList`: calls `fetchCells("default")` on mount; renders `AddCell` before and after every cell.
 - `CodeCell`: owns the bundling effect; shows a progress bar while `bundle` is missing/loading, else `Preview`.
 - `TextEditor`: click to edit markdown; a capture-phase document click listener leaves edit mode on outside click.
-- Hooks (`src/hooks`): `useActions` (bound action creators), `useTypedSelector`, `useCumulativeCode`.
+- Hooks (`src/hooks`): `useAppDispatch`, `useAppSelector` (typed react-redux hooks), `useCumulativeCode`.
 
 ## State shape (Redux)
 
-Store: `legacy_createStore(reducers, {}, applyMiddleware(persistMiddleware, thunk))` in `src/state/store.ts`.
-Reducers use immer `produce`.
+Store: `configureStore({ reducer, middleware })` in `src/state/store.ts` (default middleware, including thunk and the
+dev-only immutability/serializability checks, plus `persistListener.middleware`); exports `AppDispatch`. `RootState`
+comes from the `combineReducers` in `src/state/reducers.ts`. Slices (`src/state/slices`) use `createSlice` (immer built in);
+async work is `createAsyncThunk` in `src/state/thunks`.
 
 ```ts
 RootState = {
@@ -53,10 +55,10 @@ RootState = {
 }
 ```
 
-Action types (`src/state/action-types`): MOVE_CELL, DELETE_CELL, INSERT_CELL_AFTER, UPDATE_CELL,
-UPDATE_CELLS_TITLE, BUNDLE_START, BUNDLE_COMPLETE, FETCH_CELLS(_COMPLETE|_ERROR), SAVE_CELLS_ERROR,
-EXPORT_BOOK_SUCCESS / _ERROR, IMPORT_BOOK(_COMPLETE|_ERROR).
-Cell ids are 3-character random strings (`randomId` in `cellsReducer.ts`).
+Actions: `cellsSlice` exports `updateCell`, `deleteCell`, `moveCell`, `insertCellAfter`, `updateTitle`; `bundlesSlice` has no
+own actions and reacts to `createBundle` pending/fulfilled/rejected (keyed by `meta.arg.cellId`). `cellsSlice` also handles
+`fetchCells`, `importCells` (replace order/data/title), and the rejected cases of `fetchCells`, `importCells`, `saveCells`
+and `exportCells` (message in `cells.error`). Cell ids are 3-character random strings (`randomId` in `cellsSlice.ts`).
 
 ## Data flow: edit -> bundle -> preview
 
@@ -72,9 +74,9 @@ sequenceDiagram
   CE->>S: updateCell(id, content)
   S-->>CC: useCumulativeCode changes
   CC->>CC: debounce 1000ms (first bundle is immediate)
-  CC->>S: createBundle thunk -> BUNDLE_START
+  CC->>S: createBundle thunk -> pending
   CC->>B: bundle(cumulativeCode)
-  B-->>S: BUNDLE_COMPLETE {code, err}
+  B-->>S: fulfilled {code, err}
   S-->>P: Preview props (code, err)
   P->>P: set srcdoc, wait 200ms
   P->>P: postMessage(code) -> eval in iframe
@@ -84,7 +86,7 @@ sequenceDiagram
    either the real `show` implementation (only for the target cell; it imports `_React` and `react-dom/client`'s `createRoot` and renders
    JSX into `#root`, or JSON/HTML) or `var show = () => {};` for earlier cells, followed by
    the cell content. Text cells are skipped. Result: each cell sees all earlier code; only its own `show` draws.
-2. `CodeCell` effect calls `createBundle(cell.id, cumulativeCode)`.
+2. `CodeCell` effect dispatches `createBundle({ cellId, input: cumulativeCode })`.
 3. `bundler/index.ts` bundles `index.js` (the virtual entry) and returns `{ code, err }`; errors are caught and
    returned as `err` text.
 4. `Preview` writes a fixed HTML shell into `iframe.srcdoc` (`sandbox="allow-scripts"`), then after 200 ms posts
@@ -128,8 +130,8 @@ the Format button runs async `prettier/standalone` with the babel and estree plu
 
 ## Persistence
 
-- Autosave: `persistMiddleware` watches MOVE_CELL, UPDATE_CELL, INSERT_CELL_AFTER, DELETE_CELL,
-  UPDATE_CELLS_TITLE; debounces 250 ms and runs the `saveCells` thunk, which writes the whole `cells` slice to the
+- Autosave: `persist-listener.ts` (RTK listener middleware, ADR-015) matches `moveCell`, `updateCell`,
+  `insertCellAfter`, `deleteCell`, `updateTitle`; debounces 250 ms and dispatches the `saveCells` thunk, which writes the whole `cells` slice to the
   localforage instance `cellcache` under key `cells.title`.
 - Load: `fetchCells(title)` reads that key (empty "default" book if missing). Called once from `CellList` with `"default"`.
 - Package cache: localforage instance `filecache`, key = resolved unpkg URL, value = esbuild `OnLoadResult`.
@@ -137,7 +139,7 @@ the Format button runs async `prettier/standalone` with the babel and estree plu
 - Book export: `exportCells` JSON-stringifies the `cells` slice and streams it with `streamsaver` to
   `<title>.book`.
 - Book import: `BookImporter` reads a `.book` file as text, `importCells` parses JSON and requires `data`, `order`,
-  `title`; dispatches IMPORT_BOOK_COMPLETE (replaces the cells slice; saved to cache only once edited, via middleware).
+  `title`; fulfils with the book (replaces order/data/title; saved to cache only once edited, via middleware).
 - `getCachedBooks()` (lists `cellcache` keys) exists but is not used by any component.
 
 ## Build and deployment
@@ -161,9 +163,10 @@ Tests are Vitest (`environment: node`, config in `vite.config.ts`) in `src/**/*.
 |------|-----|--------|-------|
 | Build/dev | Vite (done) | Vite, `base: "/js-browser/"`, root `index.html`, Node 24 + `.nvmrc` + `engines` | JSB-002 |
 | Bundler | esbuild-wasm 0.28.2, `initialize` once + `build`, wasm via Vite `?url` (done) | current esbuild-wasm, `initialize` once + `build`, wasm URL tied to installed version, CSS regex fixed | JSB-003 |
-| Editor/UI | Monaco 0.57 bundled locally (wrapper 4.7, Shiki highlighting), md-editor 4, Prettier 3, React 19, FA 7 (done) | current majors; Redux Toolkit decision | JSB-004 |
+| Editor/UI | Monaco 0.57 bundled locally (wrapper 4.7, Shiki highlighting), md-editor 4, Prettier 3, React 19, FA 7 (done) | current majors | JSB-004 |
 | Deploy | GitHub Actions workflow added (pending live verification) | GitHub Actions + `deploy-pages` on push to `main` | JSB-005 |
 | Quality | ESLint, Prettier, Vitest, CI on PRs (done) | same | JSB-006 |
+| State | Redux Toolkit slices, thunks, listener middleware (done) | same | JSB-014 |
 | Cleanup | stale files/code, outdated README | removed/refreshed; MIT LICENSE | JSB-007, 008, 009 |
 | Features | single "default" book, no cell export, 2 cell types | named local books (book list/switcher over `cellcache`), per-cell file save, `css` cell type | JSB-010, 011, 012 |
 

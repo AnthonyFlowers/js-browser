@@ -45,5 +45,5 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-011 | Save an individual cell as a file | Todo | [JSB-011](JSB-011-save-cell-as-file.md) |
 | JSB-012 | Add CSS cell type | Todo | [JSB-012](JSB-012-css-cell-type.md) |
 | JSB-013 | Per-model auto-compact settings | In Progress | [JSB-013](JSB-013-per-model-autocompact-settings.md) |
-| JSB-014 | Migrate state to Redux Toolkit | Todo | [JSB-014](JSB-014-migrate-state-to-redux-toolkit.md) |
+| JSB-014 | Migrate state to Redux Toolkit | Done | [done/JSB-014](../done/JSB-014-migrate-state-to-redux-toolkit.md) |
 | JSB-015 | Adopt dev branch workflow | Done | [done/JSB-015](../done/JSB-015-adopt-dev-branch-workflow.md) |
