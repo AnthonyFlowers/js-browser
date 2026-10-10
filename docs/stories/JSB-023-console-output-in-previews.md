@@ -1,6 +1,5 @@
 # JSB-023: Show console output in cell previews
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-017

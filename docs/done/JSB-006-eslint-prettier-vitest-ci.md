@@ -1,6 +1,5 @@
 # JSB-006: Add ESLint, Prettier, and Vitest with CI checks
 
-- **Status:** Done
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-002

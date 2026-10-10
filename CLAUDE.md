@@ -16,7 +16,7 @@ cumulatively (cell N sees code from cells 1..N-1). Live site: https://anthonyflo
 - It must work well on both desktop and mobile; mobile is first-class, not an afterthought.
 - Current priority: a stability sweep (JSB-017 to JSB-020, plus JSB-016) before new features.
 
-Architecture details: `docs/architecture.md`. Decisions: `docs/decisions.md`. Work tracking: `docs/`.
+Architecture details: `docs/architecture.md`. Decisions: `docs/decisions/` (one ADR per file). Work tracking: `docs/`.
 
 ## Tech stack
 
@@ -65,7 +65,9 @@ index.html, vite.config.ts  Vite entry HTML (repo root) and config
 public/                     static assets (favicon, icons, manifest.json, robots.txt)
 eslint.config.js, .prettierrc  lint/format config (tests are `src/**/*.test.ts`, Vitest config in vite.config.ts)
 .github/workflows/          deploy.yml (Pages), ci.yml (checks)
-docs/                       stories/, done/, architecture.md, decisions.md
+.claude/                    settings.json (hooks, permissions), agents/ (subagent definitions)
+scripts/claude/             session-start.sh (SessionStart hook: Node from .nvmrc + npm ci)
+docs/                       stories/, done/, architecture.md, decisions/ (one ADR per file)
 ```
 
 ## Bundling pipeline (brief)
@@ -96,18 +98,17 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 - Keep comments light: only comment code that is genuinely complex or non-obvious; prefer clear names over comments.
 - Each component has its own `.css` file next to it; filenames are kebab-case.
 - Node 24 and npm only (keep `package-lock.json`); no yarn/pnpm.
-- Subagents: use Haiku for context-pulling tasks (search, reading, doc lookups, summarizing);
-  use Sonnet for implementation and other delegated work.
+- Subagents: use the agents in `.claude/agents` (`context-puller` Haiku for lookups, `implementer` Sonnet for stories, `release-reviewer` Opus for release PRs).
 - `.claude/settings.json` sets per-model auto-compact windows (Haiku 100k, Opus 600k) — see JSB-013.
 
 ## Workflow rules
 
 1. Every change must be tracked by a story in `docs/stories/` (create one first if none fits).
 2. Put the story ID (e.g. `JSB-002`) in every commit message.
-3. Keep the story current as you work: Status field, and tick Acceptance Criteria as they are met.
-4. When a story is complete, `git mv` it from `docs/stories/` to `docs/done/` (Status: Done) and update
+3. Keep the story current as you work: tick Acceptance Criteria as they are met. The folder is the status (no Status field); add a `State:` line only for an open story that is In Progress, Blocked or Deferred.
+4. When a story is complete, `git mv` it from `docs/stories/` to `docs/done/` and update
    the index in `docs/stories/README.md` (link now points to `docs/done/`).
-5. Record any significant technical choice as a new ADR in `docs/decisions.md`.
+5. Record any significant technical choice as a new ADR file in `docs/decisions/` (and its index).
 6. Keep `docs/architecture.md` current whenever structure or data flow changes.
 7. Do not commit unless asked. Never add Claude Code attribution to commits or PRs (no `Co-Authored-By: Claude`,
    `Claude-Session:` trailers, or "Generated with Claude Code" lines). Commit as the owner: before committing, set
@@ -120,5 +121,14 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
    merges; a merge to `main` deploys. Never push directly to `main` (ADR-017, ADR-018).
 9. Deleting any branch (e.g. `gh-pages`, `local-serve`) requires explicit owner confirmation after showing the
    owner what is on it.
+10. Subagents commit on the story branch before handing back (never leave the tree dirty).
+11. Release-review findings are fixed by a fresh Sonnet fixer given the findings and the diff, not by resuming a large-context agent.
+
+## Gotchas
+
+- The container has Node 22; the SessionStart hook puts Node 24 on `PATH` (otherwise `npx -y node@24`).
+- unpkg/jsDelivr are blocked in the sandbox: use Playwright route interception / e2e fixtures for browser checks.
+- The stop hook flags unpushed or uncommitted work: push right after each commit. Never follow its reset-author or rebase advice; it would rewrite the owner's identity.
+- The permission classifier blocks history rewrites in Auto mode; merge instead of rebasing.
 
 See `docs/README.md` for the story lifecycle.

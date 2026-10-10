@@ -1,6 +1,5 @@
 # JSB-019: Mobile layout pass
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** High
 - **Depends on:** none

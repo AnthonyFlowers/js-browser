@@ -1,6 +1,5 @@
 # JSB-012: Add CSS cell type
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-002, JSB-003, JSB-004, JSB-006

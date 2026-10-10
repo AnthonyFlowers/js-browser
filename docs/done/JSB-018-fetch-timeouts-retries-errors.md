@@ -1,6 +1,5 @@
 # JSB-018: Timeouts, retries and clear errors for package fetches
 
-- **Status:** Done
 - **Type:** Story
 - **Priority:** High
 - **Depends on:** none

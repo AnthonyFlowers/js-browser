@@ -1,9 +1,9 @@
 # JSB-008: Delete obsolete local-serve remote branch
 
-- **Status:** Deferred
 - **Type:** Chore
 - **Priority:** Low
 - **Depends on:** none
+- **State:** Deferred by owner (tag, then delete, run by the owner)
 
 ## Description
 

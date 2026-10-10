@@ -1,9 +1,9 @@
 # JSB-016: Code cell preview sometimes stays on the loading bar
 
-- **Status:** In Progress
 - **Type:** Bug
 - **Priority:** High
 - **Depends on:** JSB-018
+- **State:** In Progress, awaiting the live mobile check
 
 ## Description
 

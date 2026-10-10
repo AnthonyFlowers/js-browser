@@ -1,6 +1,5 @@
 # JSB-017: End-to-end tests in CI with Playwright
 
-- **Status:** Todo
 - **Type:** Task
 - **Priority:** High
 - **Depends on:** JSB-006

@@ -1,6 +1,5 @@
 # JSB-007: Remove stale files and code; refresh README
 
-- **Status:** Done
 - **Type:** Chore
 - **Priority:** Low
 - **Depends on:** JSB-002

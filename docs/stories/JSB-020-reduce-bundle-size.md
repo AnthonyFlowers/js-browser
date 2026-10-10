@@ -1,6 +1,5 @@
 # JSB-020: Reduce bundle size (Monaco and other heavy dependencies)
 
-- **Status:** Todo
 - **Type:** Task
 - **Priority:** High
 - **Depends on:** none

@@ -1,6 +1,5 @@
 # JSB-015: Adopt dev branch workflow
 
-- **Status:** Done
 - **Type:** Chore
 - **Priority:** Medium
 - **Depends on:** none
@@ -13,7 +12,7 @@ As the owner, I want a long-lived `dev` branch for in-progress work and release 
 
 - [x] `dev` branch created on origin from `main`
 - [x] `CLAUDE.md` Workflow rules describe the branching model (replaces "do not push to main directly")
-- [x] `docs/README.md`, `docs/decisions.md` (ADR-010) updated
+- [x] `docs/README.md`, `docs/decisions/` (ADR-010) updated
 - [x] Story index updated
 
 ## Notes

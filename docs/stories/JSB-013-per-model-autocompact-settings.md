@@ -1,9 +1,9 @@
 # JSB-013: Per-model auto-compact settings
 
-- **Status:** In Progress
 - **Type:** Chore
 - **Priority:** Low
 - **Depends on:** none
+- **State:** In Progress, awaiting verification that project-level `modelSettings` is honored
 
 ## Description
 
@@ -28,4 +28,4 @@ Configured via `modelSettings.<model>.autoCompactWindow` in `.claude/settings.js
     the exact model-key format (`claude-haiku-5-5`, `claude-opus-5-5`) are undocumented.
   - Subagent frontmatter cannot set compaction.
   - Values are capped at the model's context window (both models have 1M windows, so both values are within range).
-- Decision: see ADR-008 in `docs/decisions.md`.
+- Decision: see [ADR-008](../decisions/ADR-008-per-model-auto-compact-windows-in-project-settings.md).

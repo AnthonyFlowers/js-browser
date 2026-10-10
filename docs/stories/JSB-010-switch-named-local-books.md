@@ -1,6 +1,5 @@
 # JSB-010: Switch between named local books
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-002, JSB-003, JSB-004, JSB-014

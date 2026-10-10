@@ -1,6 +1,5 @@
 # JSB-021: Share a book via URL
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-010

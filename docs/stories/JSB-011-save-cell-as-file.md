@@ -1,6 +1,5 @@
 # JSB-011: Save an individual cell as a file
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-002, JSB-003, JSB-004

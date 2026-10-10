@@ -1,6 +1,5 @@
 # JSB-009: Add MIT LICENSE
 
-- **Status:** Done
 - **Type:** Chore
 - **Priority:** Low
 - **Depends on:** none
@@ -14,7 +13,7 @@ As the owner, I want an MIT license so that others know they may use and modify 
 - [x] `LICENSE` at repo root with the standard MIT text, "Copyright (c) <year> Anthony Flowers"
 - [x] `"license": "MIT"` set in package.json
 - [x] README has a License section
-- [x] ADR-006 recorded (already in decisions.md)
+- [x] ADR-006 recorded (already in `docs/decisions/`)
 
 ## Notes
 

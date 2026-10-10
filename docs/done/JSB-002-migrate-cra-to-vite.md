@@ -1,6 +1,5 @@
 # JSB-002: Migrate build from CRA 4 to Vite
 
-- **Status:** Done
 - **Type:** Task
 - **Priority:** High
 - **Depends on:** none

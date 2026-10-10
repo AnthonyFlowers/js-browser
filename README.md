@@ -74,11 +74,11 @@ GitHub Actions builds the site and publishes it to GitHub Pages whenever `main` 
 
 - Work is done on story branches that are merged into `dev` once checks pass.
 - Releases are `dev` to `main` pull requests, reviewed before the owner merges.
-- Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
+- Work is tracked as stories in [`docs/`](docs/README.md); see also [architecture](docs/architecture.md), [decisions](docs/decisions/README.md) and [CLAUDE.md](CLAUDE.md) for contributor and AI-assistant conventions.
 
 ## Roadmap
 
-- Stability sweep first: [E2E tests](docs/stories/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/stories/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/stories/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
+- Stability sweep first: [E2E tests](docs/stories/JSB-017-e2e-tests-in-ci.md), [fetch timeouts](docs/done/JSB-018-fetch-timeouts-retries-errors.md), [mobile layout](docs/stories/JSB-019-mobile-layout-pass.md), [bundle size](docs/stories/JSB-020-reduce-bundle-size.md) (JSB-017 to JSB-020)
 - [Switch between named local books](docs/stories/JSB-010-switch-named-local-books.md) (JSB-010)
 - [Save an individual cell as a file](docs/stories/JSB-011-save-cell-as-file.md) (JSB-011)
 - [CSS cell type](docs/stories/JSB-012-css-cell-type.md) (JSB-012)

@@ -1,6 +1,5 @@
 # JSB-024: Offline support and installable PWA
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Low
 - **Depends on:** JSB-020

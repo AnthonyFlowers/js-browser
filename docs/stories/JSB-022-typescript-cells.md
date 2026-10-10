@@ -1,6 +1,5 @@
 # JSB-022: TypeScript in code cells
 
-- **Status:** Todo
 - **Type:** Story
 - **Priority:** Medium
 - **Depends on:** JSB-017
