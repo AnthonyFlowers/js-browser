@@ -22,3 +22,7 @@ GitHub-hosted minutes are unavailable, without letting fork pull requests reach 
 
 Decision: ADR-025. Routing rules and the setup came from the owner's runner reference (Obsidian vault:
 `reference/tech/github-runners.md`). The dispatch input only works once the workflow on `main` has it.
+
+First `runner=desktop` run (2026-10-11): `check` passed; `e2e` failed with `EACCES: permission denied, mkdir '/opt/ms-playwright'`
+because the runner image sets `PLAYWRIGHT_BROWSERS_PATH` to a root-owned directory. The e2e install and test steps now set
+`PLAYWRIGHT_BROWSERS_PATH` to `${{ runner.temp }}/ms-playwright`, which works on both hosted and self-hosted runners.
