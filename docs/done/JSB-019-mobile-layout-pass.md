@@ -3,7 +3,6 @@
 - **Type:** Story
 - **Priority:** High
 - **Depends on:** none
-- **State:** Awaiting owner check on a real phone
 
 ## Description
 
@@ -21,7 +20,7 @@ Mobile is first-class (see CLAUDE.md, Project direction). The owner already uses
 - [x] `ActionBar` and `AddCell` controls have touch-sized hit areas
 - [x] Markdown cell (`text-editor.tsx`) edit and preview work with touch, including leaving edit mode by tapping outside
 - [x] Save Book and Load Book work on iOS Safari and Android Chrome (streamsaver may need a fallback; document the result)
-- [ ] Verified in a mobile-emulated viewport in the e2e suite (JSB-017) and on a real phone; findings and fixes noted here (e2e done; real phone open, see below)
+- [x] Verified in a mobile-emulated viewport in the e2e suite (JSB-017) and on a real phone; findings and fixes noted here (real-phone findings below, fixed in JSB-029)
 
 ## Notes
 
@@ -50,3 +49,8 @@ Part of the stability sweep. Likely touches `code-cell.css`, `resizable.css`, `t
 6. Text cell: tap to edit, type, tap elsewhere on the page (including empty background): it renders; the MDEditor height bar is not touch-resizable (known).
 7. Save Book: does a download or Save to Files prompt appear, and does the `.book` file open in Files? Load Book: can the saved `.book` file be picked (not greyed out)?
 8. Android Chrome, if available: same Save Book and Load Book check.
+
+## Real-phone result (owner, iPhone, 2026-10-10)
+
+Items 2, 4, 5 and 6 pass. Three failures are tracked as JSB-029: (1) a long unbroken line in the preview scrolls
+sideways, (3) a vertical swipe on the editor does not scroll the page, (7) Save Book saves `default.book.json`.

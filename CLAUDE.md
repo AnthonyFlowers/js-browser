@@ -27,7 +27,7 @@ Current:
 - esbuild-wasm 0.28.2 (`initialize`/`build`; wasm self-hosted via Vite `?url`, ADR-009), axios + localforage (IndexedDB) for fetch/cache
 - Bulma (bulmaswatch superhero) + Font Awesome 7; streamsaver for book download
 - Tooling (JSB-006): ESLint 10 flat config (`eslint.config.js`, typescript-eslint, react-hooks, react-refresh, eslint-config-prettier), Prettier 3 (`.prettierrc`; same package as the in-editor Format runtime dep), Vitest 5 (node environment), Playwright 1.64 (`@playwright/test`, Chromium, `e2e/`; JSB-017, ADR-021) with playwright-bdd 9 for Gherkin features (JSB-026, ADR-022).
-- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build (job `check`), then the Playwright suite (job `e2e`), on PRs to `dev`/`main` and pushes to `dev`. Both can run on the owner's self-hosted runners: CI only via manual dispatch with a `runner` input, deploy via the `DEPLOY_RUNNER` repo variable; PR and push CI always stay GitHub-hosted (ADR-025; never route PR-triggered jobs to self-hosted).
+- Deployed by GitHub Actions (`.github/workflows/deploy.yml`) to GitHub Pages on push to `main`. `.github/workflows/ci.yml` runs lint, format check, typecheck, test and build (job `check`), then the Playwright suite (job `e2e`), on PRs to `dev`/`main` and pushes to `dev`. Both can run on the owner's self-hosted runners: CI only via manual dispatch with a `runner` input, deploy via the `DEPLOY_RUNNER` repo variable (currently set to the desktop runner); PR and push CI always stay GitHub-hosted (ADR-025; never route PR-triggered jobs to self-hosted).
 
 ## Commands
 
@@ -138,5 +138,6 @@ Vite `base` must stay `/js-browser/`. Do NOT reintroduce the manual `gh-pages` p
 - Locally Playwright 1.64 wants a newer Chromium than the preinstalled one: run `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run test:e2e` (never `playwright install` here). CI leaves it unset and installs browsers. `E2E_SKIP_BUILD=1` reuses `dist/`.
 - The stop hook flags unpushed or uncommitted work: push right after each commit. Never follow its reset-author or rebase advice; it would rewrite the owner's identity.
 - The permission classifier blocks history rewrites in Auto mode; merge instead of rebasing.
+- Self-hosted CI runs (ADR-025): dispatch `ci.yml` with `runner=desktop` (owner preference); use `mac-local` only if the desktop job stays queued (desktop offline).
 
 See `docs/README.md` for the story lifecycle.

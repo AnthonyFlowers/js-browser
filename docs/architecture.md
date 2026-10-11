@@ -28,6 +28,7 @@ graph TD
 ```
 
 - `TopMenu`: book title input (currently `disabled`), "Save Book" (`exportCells`), "Load Book" toggle for `BookImporter`.
+- Editor swipe (JSB-029): `hooks/use-page-scroll-on-touch.ts` forwards a vertical swipe on the Monaco editor to `window.scrollBy` when the editor cannot scroll further (`hooks/page-scroll.ts`); narrow layout only, only for single-finger vertical swipes that start inside the editor's DOM and are not dragging a selection (JSB-031).
 - Mobile layout (JSB-019): below 768 px (`NARROW_QUERY` in `hooks/use-media-query.ts`, mirrored by `max-width: 767px` in the CSS)
   `CodeCell` renders the editor in a vertical `Resizable` (min height 120 px) with a full-width preview below, instead of the
   side-by-side flex row with the horizontal handle; `TextEditor` edits without the live split. Touch devices
@@ -158,7 +159,7 @@ preloaded; it is fetched by the first bundle. Sizes and the per-dependency revie
 - Package cache: localforage instance `filecache`, key = resolved unpkg URL, value = esbuild `OnLoadResult`.
   No invalidation.
 - Book export: `exportCells` JSON-stringifies the `cells` slice and passes it to `downloadBook` (`thunks/download-book.ts`,
-  ADR-023): `streamsaver` on desktop, a Blob plus temporary `<a download>` on touch devices or without a service worker.
+  ADR-023): `streamsaver` on desktop, a Blob plus temporary `<a download>` on touch devices or without a service worker. The Blob is `application/octet-stream` so iOS keeps `.book`.
 - Book import: `BookImporter` reads a `.book` file as text, `importCells` parses JSON and requires `data`, `order`,
   `title`; fulfils with the book (replaces order/data/title; saved to cache only once edited, via middleware).
 - `getCachedBooks()` (lists `cellcache` keys) exists but is not used by any component.

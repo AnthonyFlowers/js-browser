@@ -31,7 +31,7 @@ const BookImporter = () => {
         className="file-input"
         onChange={handleFileChange}
         type="file"
-        accept={isTouchDevice() ? undefined : ".book"}
+        accept={isTouchDevice() ? undefined : ".book,.json"}
         name="resume"
       />
       <span className="file-cta">

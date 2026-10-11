@@ -1,8 +1,11 @@
 import { isTouchDevice } from "../../platform";
 
+/** Not application/json: iOS Safari appends ".json" to the name of a JSON download. */
+const BOOK_MIME_TYPE = "application/octet-stream";
+
 const downloadWithAnchor = (filename: string, contents: string) => {
   const url = URL.createObjectURL(
-    new Blob([contents], { type: "application/json" })
+    new Blob([contents], { type: BOOK_MIME_TYPE })
   );
   const anchor = document.createElement("a");
   anchor.href = url;

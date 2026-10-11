@@ -293,6 +293,15 @@ When(
 );
 
 When("I tap Save Book", async ({ page, world }) => {
+  await page.evaluate(() => {
+    const w = window as unknown as { __blobTypes: string[] };
+    w.__blobTypes = [];
+    const original = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = (obj: Blob | MediaSource) => {
+      if (obj instanceof Blob) w.__blobTypes.push(obj.type);
+      return original(obj);
+    };
+  });
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Save Book" }).tap();
   world.download = await download;
@@ -384,6 +393,39 @@ Then(
 );
 
 Then(
+  "the preview of cell {int} shows the start of {string}",
+  async ({ page }, number: number, text: string) => {
+    await expect(previewRoot(cellAt(page, number))).toContainText(text);
+  }
+);
+
+Then(
+  "the preview of cell {int} does not scroll horizontally",
+  async ({ page }, number: number) => {
+    const frame = cellAt(page, number).frameLocator(
+      "iframe[title='code-executor']"
+    );
+    await expect(frame.locator("#root")).not.toBeEmpty();
+    const overflow = await frame
+      .locator("html")
+      .evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  }
+);
+
+Then("the downloaded file does not end in {string}", async ({ world }, ext) => {
+  expect(world.download?.suggestedFilename().endsWith(ext)).toBe(false);
+});
+
+Then("the saved blob type is not {string}", async ({ page }, type: string) => {
+  const types = await page.evaluate(
+    () => (window as unknown as { __blobTypes: string[] }).__blobTypes
+  );
+  expect(types.length).toBeGreaterThan(0);
+  expect(types).not.toContain(type);
+});
+
+Then(
   "a .book file is downloaded containing {string}",
   async ({ world }, text: string) => {
     expect(world.download?.suggestedFilename()).toMatch(/\.book$/);
@@ -419,3 +461,79 @@ Then(
     );
   }
 );
+
+const pageScrollY = (page: Parameters<typeof cells>[0]) =>
+  page.evaluate(() => window.scrollY);
+
+Then(
+  "the page is at least {int} px taller than the screen",
+  async ({ page }, extra: number) => {
+    const spare = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight
+    );
+    expect(spare).toBeGreaterThanOrEqual(extra);
+  }
+);
+
+When("I scroll the page to the top", async ({ page }) => {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  expect(await pageScrollY(page)).toBe(0);
+});
+
+When(
+  "I swipe up {int} px starting on the code of cell {int}",
+  async ({ page }, distance: number, number: number) => {
+    const from = await centerOf(editorText(cellAt(page, number)));
+    await touchDrag(page, from, { x: from.x, y: from.y - distance });
+  }
+);
+
+When(
+  "I swipe up {int} px starting on the Format button of cell {int}",
+  async ({ page }, distance: number, number: number) => {
+    const from = await centerOf(
+      cellAt(page, number).getByRole("button", { name: "Format" })
+    );
+    await touchDrag(page, from, { x: from.x, y: from.y - distance });
+  }
+);
+
+When(
+  "I swipe left {int} px with {int} px of vertical drift starting on the code of cell {int}",
+  async ({ page }, distance: number, drift: number, number: number) => {
+    const from = await centerOf(editorText(cellAt(page, number)));
+    await touchDrag(page, from, {
+      x: from.x - distance,
+      y: from.y - drift,
+    });
+  }
+);
+
+Then("the page has scrolled down", async ({ page }) => {
+  await expect.poll(() => pageScrollY(page)).toBeGreaterThan(40);
+});
+
+Then("the page has not scrolled", async ({ page }) => {
+  await page.waitForTimeout(300);
+  expect(await pageScrollY(page)).toBe(0);
+});
+
+When("I count the page scroll calls made by the app", async ({ page }) => {
+  await page.evaluate(() => {
+    const w = window as unknown as { __scrollByCalls: number };
+    w.__scrollByCalls = 0;
+    const original = window.scrollBy.bind(window);
+    window.scrollBy = ((...args: Parameters<typeof window.scrollBy>) => {
+      w.__scrollByCalls++;
+      return original(...args);
+    }) as typeof window.scrollBy;
+  });
+});
+
+Then("the app has not scrolled the page itself", async ({ page }) => {
+  await page.waitForTimeout(300);
+  const calls = await page.evaluate(
+    () => (window as unknown as { __scrollByCalls: number }).__scrollByCalls
+  );
+  expect(calls).toBe(0);
+});

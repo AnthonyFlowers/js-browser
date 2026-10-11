@@ -3,7 +3,6 @@
 - **Type:** Bug
 - **Priority:** High
 - **Depends on:** JSB-018
-- **State:** In Progress, awaiting the live mobile check
 
 ## Description
 
@@ -23,7 +22,7 @@ correctly ("Today is Friday, Oct 9 and nums has 4 items" and a styled Bulma butt
 
 | Stuck | Loaded later |
 |-------|--------------|
-| ![Cells 3 and 4 stuck on the loading bar](assets/JSB-016-stuck-loading.png) | ![All cells rendered](assets/JSB-016-loaded.png) |
+| ![Cells 3 and 4 stuck on the loading bar](../stories/assets/JSB-016-stuck-loading.png) | ![All cells rendered](../stories/assets/JSB-016-loaded.png) |
 
 Steps to reproduce: not yet known. Likely conditions are the first import of a package that is not yet cached in
 IndexedDB, on a slow or mobile connection. Workaround: delete the cell and add it again.
@@ -34,7 +33,7 @@ IndexedDB, on a slow or mobile connection. Workaround: delete the cell and add i
 - [x] A bundle that cannot complete ends in a visible error in the preview instead of an indefinite loading bar
 - [x] A slow but progressing first fetch still completes and renders
 - [x] Regression test covering the failure mode (thunk/plugin level)
-- [ ] Verified on the live site on mobile after release
+- [x] Verified on the live site on mobile after release
 
 ## Notes
 
@@ -96,3 +95,7 @@ Checked and ruled out as the cause:
 
 Still open: the live-site check on mobile after release.
 
+
+Live check (owner, iPhone, 2026-10-10, after the PR #6 release): a first-time package import renders, and an invalid
+package shows `Failed to fetch https://unpkg.com/date-fns-bad: network error (Network Error) (3 attempts)` instead of
+a stuck loading bar ([screenshot](../stories/assets/JSB-029-import-error.png)).
