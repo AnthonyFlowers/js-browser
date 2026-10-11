@@ -62,3 +62,6 @@ available in Safari). Manual check for the owner: select a word and see whether 
 2. Long editor: swipe inside; the editor scrolls first, then at its top or bottom the page scrolls.
 3. Tap to type, double-tap to select a word, drag a handle: all still work.
 4. Save Book: the Files prompt shows `<title>.book`; Load Book accepts it.
+
+Owner iPhone recheck after release (2026-10-11): preview wrapping, editor swipe (short and long cells) and Save/Load Book
+pass; selection handles remain in JSB-030.

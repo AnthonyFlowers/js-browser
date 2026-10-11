@@ -27,3 +27,7 @@ the selection inside that textarea. Options: (1) a CSS override making `.inputar
 JSB-031 added a selection check to the page-scroll hook: while the editor selection is non-empty the swipe is not forwarded to
 the page (so dragging a selection does not scroll the page). Any handles fix must keep this working: handle drags must still
 leave the selection non-empty and must not start page scrolling.
+
+Owner iPhone recheck after the JSB-029/JSB-031 release (2026-10-11): preview wrapping, page scroll over the editor (short and
+long cells) and Save/Load Book all pass. Selecting text still works, but the selection handles are no longer visible at all
+([screenshot](assets/JSB-030-no-handles-after-jsb-029.png): a three-line selection on line 3 with no handles on screen).
