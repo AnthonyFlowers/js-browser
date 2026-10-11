@@ -5,6 +5,13 @@ on:
     branches: [dev, main]
   push:
     branches: [dev]
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "ubuntu-latest (GitHub-hosted), desktop (self-hosted x64), mac-local (self-hosted arm64)"
+        type: choice
+        options: [ubuntu-latest, desktop, mac-local]
+        default: ubuntu-latest
 
 permissions:
   contents: read
@@ -15,7 +22,7 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner)) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -31,7 +38,7 @@ jobs:
 
   e2e:
     needs: check
-    runs-on: ubuntu-latest
+    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner)) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

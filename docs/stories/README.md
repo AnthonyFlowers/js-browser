@@ -60,5 +60,6 @@ Findings, decisions (link ADRs), blockers, owner actions.
 | JSB-026 | Gherkin e2e scenarios with playwright-bdd | [done/JSB-026](../done/JSB-026-gherkin-e2e-scenarios-with-playwright-bdd.md) |
 | JSB-027 | Flaky e2e: moving and deleting cells | [done/JSB-027](../done/JSB-027-flaky-e2e-moving-and-deleting-cells.md) |
 | JSB-028 | Release review fixes for the stability sweep | [done/JSB-028](../done/JSB-028-release-review-fixes-for-the-stability-sweep.md) |
+| JSB-032 | Self-hosted GitHub Actions runners | [JSB-032](JSB-032-self-hosted-github-actions-runners.md) |
 
 Priority order: the stability sweep comes first: JSB-019 next, then JSB-020 done (JSB-017 and JSB-018 done; JSB-016 awaits the live mobile check); JSB-010 to JSB-012 and JSB-021 to JSB-023 (Medium) and JSB-024 (Low) follow.
