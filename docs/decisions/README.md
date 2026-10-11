@@ -45,3 +45,4 @@ history (supersede or amend with a new ADR instead, and link the related ADRs wi
 - [ADR-022: Gherkin e2e scenarios with playwright-bdd (amends ADR-021)](ADR-022-gherkin-e2e-scenarios-with-playwright-bdd.md)
 - [ADR-023: Save Book falls back to a Blob download on touch devices](ADR-023-save-book-falls-back-to-a-blob-download-on-touch-devices.md)
 - [ADR-024: Import Monaco `editor.api` with selected contributions (amends ADR-011)](ADR-024-import-monaco-editor-api-with-selected-contributions.md)
+- [ADR-025: Opt-in self-hosted runners for CI and deploy](ADR-025-opt-in-self-hosted-runners-for-ci-and-deploy.md)
