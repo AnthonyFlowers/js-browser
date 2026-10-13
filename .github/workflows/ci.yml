@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: "ubuntu-latest (GitHub-hosted), desktop (self-hosted x64), mac-local (self-hosted arm64)"
+        description: "ubuntu-latest (GitHub-hosted), tuf (self-hosted x64, TUF A15 laptop), desktop (self-hosted x64), mac-local (self-hosted arm64), auto (picks a self-hosted machine; for now it means desktop until the central scheduler lands)"
         type: choice
-        options: [ubuntu-latest, desktop, mac-local]
+        options: [auto, tuf, desktop, mac-local, ubuntu-latest]
         default: ubuntu-latest
 
 permissions:
@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner)) }}
+    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner == 'auto' && 'desktop' || inputs.runner)) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -38,7 +38,7 @@ jobs:
 
   e2e:
     needs: check
-    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner)) }}
+    runs-on: ${{ (inputs.runner == '' || inputs.runner == 'ubuntu-latest') && 'ubuntu-latest' || fromJSON(format('["self-hosted","{0}"]', inputs.runner == 'self-hosted' && 'mac-local' || inputs.runner == 'auto' && 'desktop' || inputs.runner)) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
